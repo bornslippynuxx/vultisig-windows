@@ -1,4 +1,4 @@
-/* eslint-disable */
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace storage {
   export class AddressBookItem {
     ID: number[];
@@ -135,6 +135,7 @@ export namespace storage {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace tss {
   export class KeysignResponse {
     msg: string;

@@ -37,6 +37,7 @@ export const appPaths = {
   privacyPolicy: '/vault/settings/privacy-policy',
   termsOfService: '/vault/settings/terms-of-service',
   vaultFAQ: '/vault/settings/faq',
+  vaultItemSwap: '/vault/item/swap',
 } as const;
 
 type AppPaths = typeof appPaths;
@@ -51,6 +52,7 @@ export type AppPathParams = {
   vaultChainDetail: { chain: Chain };
   vaultChainCoinDetail: { chain: Chain; coin: string };
   vaultItemSend: { chain: Chain };
+  vaultItemSwap: Record<string, string>;
 };
 
 export type AppPathsWithParams = keyof AppPathParams;

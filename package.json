@@ -1,5 +1,7 @@
 {
   "devDependencies": {
+    "@types/react-modal": "^3.16.3",
+    "@types/react-window": "^1.8.8",
     "eslint": "^8.57.1",
     "husky": "^9.1.4",
     "lint-staged": "^15.2.10",
@@ -13,5 +15,12 @@
       "eslint --fix",
       "prettier --write"
     ]
+  },
+  "dependencies": {
+    "@ethersproject/providers": "^5.7.2",
+    "@xchainjs/xchain-util": "^0.13.3",
+    "bignumber.js": "^9.1.2",
+    "react-modal": "^3.16.1",
+    "react-window": "^1.8.8"
   }
 }

@@ -15,6 +15,7 @@ import ImportVaultView from './pages/importVault/ImportVaultView';
 import JoinKeysignFlow from './pages/keysign/JoinKeysignFlow';
 import KeysignFlowView from './pages/keysign/KeysignFlow';
 import SendCryptoView from './pages/send/SendCryptoView';
+import SwapCryptoView from './pages/swap/SwapCryptoView';
 import { VaultPage } from './pages/vault/VaultPage';
 import SettingsVaultPage from './pages/vaultSettings/SettingsVaultPage';
 import AddressBookSettingsPage from './pages/vaultSettings/vaultAddressBook/AddressBookSettingsPage';
@@ -108,6 +109,10 @@ export const router = createBrowserRouter([
   {
     path: appPaths.vaultItemSend,
     element: <SendCryptoView />,
+  },
+  {
+    path: appPaths.vaultItemSwap,
+    element: <SwapCryptoView />,
   },
   {
     path: appPaths.verifyTransaction,

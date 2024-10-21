@@ -4,6 +4,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from 'react-router-dom';
 
 import { InitializedWalletOnly } from './components/wallet/InitializedWalletOnly';
+import { useFavouriteTokens } from './lib/hooks/use-favourite-tokens';
 import { GlobalStyle } from './lib/ui/css/GlobalStyle';
 import { darkTheme } from './lib/ui/theme/darkTheme';
 import { ThemeProvider } from './lib/ui/theme/ThemeProvider';
@@ -16,6 +17,7 @@ import { VaultsDependant } from './vault/components/VaultsDependant';
 const queryClient = getQueryClient();
 
 const App = () => {
+  useFavouriteTokens();
   return (
     <WalletCoreProvider>
       <QueryClientProvider client={queryClient}>
