@@ -15,14 +15,9 @@ import { getErc20Prices } from '../price/api/evm/getErc20Prices';
 import { getCoinPrices } from '../price/api/getCoinPrices';
 import { FiatCurrency } from '../price/FiatCurrency';
 
-type GetCoinPricesQueryKeysInput = {
-  coins: CoinKey[];
-  fiatCurrency: FiatCurrency;
-};
-
-export const getCoinPricesQueryKeys = (input: GetCoinPricesQueryKeysInput) => [
+export const getCoinPricesQueryKeys = (coins: CoinKey[]) => [
   'coinPrices',
-  input,
+  coins,
 ];
 
 type UseCoinPricesQueryInput = {
@@ -30,14 +25,17 @@ type UseCoinPricesQueryInput = {
   fiatCurrency?: FiatCurrency;
 };
 
-export const useCoinPricesQuery = (input: UseCoinPricesQueryInput) => {
+export const useCoinPricesQuery = ({
+  coins,
+  fiatCurrency: optionalFiatCurrency,
+}: UseCoinPricesQueryInput) => {
   const [defaultFiatCurrency] = useFiatCurrency();
 
-  const fiatCurrency = input.fiatCurrency ?? defaultFiatCurrency;
+  const fiatCurrency = optionalFiatCurrency ?? defaultFiatCurrency;
 
   const queries = [];
 
-  const [regularCoins, erc20Coins] = splitBy(input.coins, coin =>
+  const [regularCoins, erc20Coins] = splitBy(coins, coin =>
     isOneOf(coin.chain, Object.values(EvmChain)) && !isNativeCoin(coin) ? 1 : 0
   );
 
@@ -46,10 +44,7 @@ export const useCoinPricesQuery = (input: UseCoinPricesQueryInput) => {
 
     Object.entries(groupedByChain).forEach(([chain, coins]) => {
       queries.push({
-        queryKey: getCoinPricesQueryKeys({
-          coins,
-          fiatCurrency,
-        }),
+        queryKey: getCoinPricesQueryKeys(coins),
         queryFn: async () => {
           const prices = await getErc20Prices({
             ids: coins.map(coin => coin.id),
@@ -73,10 +68,7 @@ export const useCoinPricesQuery = (input: UseCoinPricesQueryInput) => {
 
   if (!isEmpty(regularCoins)) {
     queries.push({
-      queryKey: getCoinPricesQueryKeys({
-        coins: regularCoins,
-        fiatCurrency,
-      }),
+      queryKey: getCoinPricesQueryKeys(regularCoins),
       queryFn: async () => {
         const prices = await getCoinPrices({
           ids: regularCoins.map(coin => coin.priceProviderId),
