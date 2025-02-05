@@ -34,6 +34,10 @@ export function GetCoins(arg1) {
   return window['go']['storage']['Store']['GetCoins'](arg1);
 }
 
+export function GetSettings() {
+  return window['go']['storage']['Store']['GetSettings']();
+}
+
 export function GetVault(arg1) {
   return window['go']['storage']['Store']['GetVault'](arg1);
 }
@@ -64,6 +68,10 @@ export function SaveCoin(arg1, arg2) {
 
 export function SaveCoins(arg1, arg2) {
   return window['go']['storage']['Store']['SaveCoins'](arg1, arg2);
+}
+
+export function SaveSettings(arg1) {
+  return window['go']['storage']['Store']['SaveSettings'](arg1);
 }
 
 export function SaveVault(arg1) {
