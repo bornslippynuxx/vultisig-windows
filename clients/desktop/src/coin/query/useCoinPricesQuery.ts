@@ -45,8 +45,8 @@ export const useCoinPricesQuery = ({
     Object.entries(groupedByChain).forEach(([chain, coins]) => {
       queries.push({
         queryKey: getCoinPricesQueryKeys(coins),
-        queryFn: async () => {
-          const prices = await getErc20Prices({
+        queryFn: () => {
+          const prices = getErc20Prices({
             ids: coins.map(coin => coin.id),
             chain: chain as EvmChain,
             fiatCurrency,
@@ -69,8 +69,8 @@ export const useCoinPricesQuery = ({
   if (!isEmpty(regularCoins)) {
     queries.push({
       queryKey: getCoinPricesQueryKeys(regularCoins),
-      queryFn: async () => {
-        const prices = await getCoinPrices({
+      queryFn: () => {
+        const prices = getCoinPrices({
           ids: regularCoins.map(coin => coin.priceProviderId),
           fiatCurrency,
         });
