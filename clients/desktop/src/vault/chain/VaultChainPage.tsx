@@ -1,7 +1,3 @@
-import { splitBy } from '@lib/utils/array/splitBy';
-import { sum } from '@lib/utils/array/sum';
-import { withoutDuplicates } from '@lib/utils/array/withoutDuplicates';
-import { formatAmount } from '@lib/utils/formatAmount';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +21,7 @@ import { createCoin } from '../../coin/utils/createCoin';
 import { getCoinValue } from '../../coin/utils/getCoinValue';
 import { sortCoinsByBalance } from '../../coin/utils/sortCoinsByBalance';
 import { getStorageCoinKey } from '../../coin/utils/storageCoin';
+import { useGlobalCurrency } from '../../lib/hooks/useGlobalCurrency';
 import { IconButton } from '../../lib/ui/buttons/IconButton';
 import { CopyIcon } from '../../lib/ui/icons/CopyIcon';
 import { RefreshIcon } from '../../lib/ui/icons/RefreshIcon';
@@ -34,8 +31,11 @@ import { Panel } from '../../lib/ui/panel/Panel';
 import { MatchQuery } from '../../lib/ui/query/components/MatchQuery';
 import { useInvalidateQueries } from '../../lib/ui/query/hooks/useInvalidateQueries';
 import { Text } from '../../lib/ui/text';
+import { splitBy } from '@lib/utils/array/splitBy';
+import { sum } from '@lib/utils/array/sum';
+import { withoutDuplicates } from '@lib/utils/array/withoutDuplicates';
+import { formatAmount } from '@lib/utils/formatAmount';
 import { makeAppPath } from '../../navigation';
-import { useFiatCurrency } from '../../preferences/state/fiatCurrency';
 import { useAssertWalletCore } from '../../providers/WalletCoreProvider';
 import {
   PersistentStateKey,
@@ -68,7 +68,7 @@ export const VaultChainPage = () => {
   const chain = useCurrentVaultChain();
   const currentChainCoins = useCurrentVaultChainCoins(chain);
   const invalidateQueries = useInvalidateQueries();
-  const [fiatCurrency] = useFiatCurrency();
+  const { globalCurrency } = useGlobalCurrency();
   const publicKeyQuery = useVaultPublicKeyQuery(chain);
   const vaultAddressQuery = useVaultAddressQuery(chain);
   const vaultCoinsQuery = useVaultChainCoinsQuery(chain);
@@ -219,7 +219,7 @@ export const VaultChainPage = () => {
                     centerVertically
                   >
                     <BalanceVisibilityAware>
-                      {formatAmount(total, fiatCurrency)}
+                      {formatAmount(total, globalCurrency)}
                     </BalanceVisibilityAware>
                   </Text>
                 );

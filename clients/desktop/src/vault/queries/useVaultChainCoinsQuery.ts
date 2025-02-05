@@ -1,16 +1,7 @@
-import { withoutUndefined } from '@lib/utils/array/withoutUndefined';
-import { shouldBePresent } from '@lib/utils/assert/shouldBePresent';
-import { EntityWithLogo } from '@lib/utils/entities/EntityWithLogo';
-import { EntityWithTicker } from '@lib/utils/entities/EntityWithTicker';
 import { useMemo } from 'react';
 
 import { EntityWithPrice } from '../../chain/EntityWithPrice';
-import {
-  areEqualCoins,
-  CoinAmount,
-  CoinKey,
-  coinKeyToString,
-} from '../../coin/Coin';
+import { areEqualCoins, CoinAmount, CoinKey } from '../../coin/Coin';
 import { useBalancesQuery } from '../../coin/query/useBalancesQuery';
 import { useCoinPricesQuery } from '../../coin/query/useCoinPricesQuery';
 import {
@@ -22,7 +13,12 @@ import {
   pendingQuery,
   Query,
 } from '../../lib/ui/query/Query';
+import { withoutUndefined } from '@lib/utils/array/withoutUndefined';
+import { shouldBePresent } from '@lib/utils/assert/shouldBePresent';
+import { EntityWithLogo } from '@lib/utils/entities/EntityWithLogo';
+import { EntityWithTicker } from '@lib/utils/entities/EntityWithTicker';
 import { Chain } from '../../model/chain';
+import { CoinMeta } from '../../model/coin-meta';
 import { useCurrentVaultChainCoins } from '../state/currentVault';
 
 export type VaultChainCoin = CoinKey &
@@ -34,12 +30,9 @@ export type VaultChainCoin = CoinKey &
 export const useVaultChainCoinsQuery = (chain: Chain) => {
   const coins = useCurrentVaultChainCoins(chain);
 
-  const pricesQuery = useCoinPricesQuery({
-    coins: coins.map(coin => ({
-      ...getStorageCoinKey(coin),
-      priceProviderId: coin.price_provider_id,
-    })),
-  });
+  const pricesQuery = useCoinPricesQuery(
+    coins.map(storageCoinToCoin).map(CoinMeta.fromCoin)
+  );
 
   const balancesQuery = useBalancesQuery(coins.map(storageCoinToCoin));
 
@@ -58,9 +51,10 @@ export const useVaultChainCoinsQuery = (chain: Chain) => {
           );
           const amount = balance?.amount || BigInt(0);
 
-          const price = shouldBePresent(pricesQuery.data)[
-            coinKeyToString(coinKey)
-          ];
+          const price =
+            shouldBePresent(pricesQuery.data).find(item =>
+              areEqualCoins(item, coinKey)
+            )?.price ?? 0;
 
           return {
             ...coinKey,

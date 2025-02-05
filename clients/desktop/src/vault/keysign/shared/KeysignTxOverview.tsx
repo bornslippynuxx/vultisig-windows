@@ -1,8 +1,3 @@
-import { KeysignPayload } from '@core/communication/vultisig/keysign/v1/keysign_message_pb';
-import { isOneOf } from '@lib/utils/array/isOneOf';
-import { shouldBePresent } from '@lib/utils/assert/shouldBePresent';
-import { formatAmount } from '@lib/utils/formatAmount';
-import { matchDiscriminatedUnion } from '@lib/utils/matchDiscriminatedUnion';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -17,7 +12,8 @@ import { useCopyTxHash } from '../../../chain/ui/hooks/useCopyTxHash';
 import { fromChainAmount } from '../../../chain/utils/fromChainAmount';
 import { getBlockExplorerUrl } from '../../../chain/utils/getBlockExplorerUrl';
 import { useCoinPriceQuery } from '../../../coin/query/useCoinPriceQuery';
-import { getCoinKey } from '../../../coin/utils/coin';
+import { KeysignPayload } from '@core/communication/vultisig/keysign/v1/keysign_message_pb';
+import { useGlobalCurrency } from '../../../lib/hooks/useGlobalCurrency';
 import { IconButton } from '../../../lib/ui/buttons/IconButton';
 import { CopyIcon } from '../../../lib/ui/icons/CopyIcon';
 import { LinkIcon } from '../../../lib/ui/icons/LinkIcon';
@@ -25,8 +21,12 @@ import { HStack, VStack } from '../../../lib/ui/layout/Stack';
 import { ValueProp } from '../../../lib/ui/props';
 import { MatchQuery } from '../../../lib/ui/query/components/MatchQuery';
 import { Text } from '../../../lib/ui/text';
+import { isOneOf } from '@lib/utils/array/isOneOf';
+import { shouldBePresent } from '@lib/utils/assert/shouldBePresent';
+import { formatAmount } from '@lib/utils/formatAmount';
+import { matchDiscriminatedUnion } from '@lib/utils/matchDiscriminatedUnion';
 import { Chain } from '../../../model/chain';
-import { useFiatCurrency } from '../../../preferences/state/fiatCurrency';
+import { CoinMeta } from '../../../model/coin-meta';
 import { KeysignSwapTxInfo } from '../../swap/keysign/KeysignSwapTxInfo';
 import { SwapTrackingLink } from './SwapTrackingLink';
 
@@ -36,7 +36,7 @@ export const KeysignTxOverview = ({ value }: ValueProp<KeysignPayload>) => {
   const { t } = useTranslation();
 
   const copyTxHash = useCopyTxHash();
-  const [fiatCurrency] = useFiatCurrency();
+  const { globalCurrency } = useGlobalCurrency();
   const {
     coin: potentialCoin,
     toAddress,
@@ -53,12 +53,7 @@ export const KeysignTxOverview = ({ value }: ValueProp<KeysignPayload>) => {
   const coin = shouldBePresent(potentialCoin);
 
   const { decimals } = shouldBePresent(coin);
-  const coinPriceQuery = useCoinPriceQuery({
-    coin: {
-      ...getCoinKey(coin),
-      priceProviderId: coin.priceProviderId,
-    },
-  });
+  const coinPriceQuery = useCoinPriceQuery(CoinMeta.fromCoin(coin));
 
   const formattedToAmount = useMemo(() => {
     if (!toAmount) return null;
@@ -141,7 +136,7 @@ export const KeysignTxOverview = ({ value }: ValueProp<KeysignPayload>) => {
                 <TxOverviewRow>
                   <span>{t('value')}</span>
                   <span>
-                    {formatAmount(formattedToAmount * price, fiatCurrency)}
+                    {formatAmount(formattedToAmount * price, globalCurrency)}
                   </span>
                 </TxOverviewRow>
               ) : null
