@@ -29,6 +29,7 @@ export const useVaults = () => {
   if (!data || data.length === 0) {
     return [];
   }
+  console.log('data', data);
   return shouldBePresent(data);
 };
 
