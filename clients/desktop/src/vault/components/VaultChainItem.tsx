@@ -1,11 +1,10 @@
-import { sum } from '@lib/utils/array/sum';
-import { formatAmount } from '@lib/utils/formatAmount';
 import styled from 'styled-components';
 
 import { ChainEntityIcon } from '../../chain/ui/ChainEntityIcon';
 import { fromChainAmount } from '../../chain/utils/fromChainAmount';
 import { getChainEntityIconSrc } from '../../chain/utils/getChainEntityIconSrc';
 import { getCoinValue } from '../../coin/utils/getCoinValue';
+import { useGlobalCurrency } from '../../lib/hooks/useGlobalCurrency';
 import { centerContent } from '../../lib/ui/css/centerContent';
 import { horizontalPadding } from '../../lib/ui/css/horizontalPadding';
 import { round } from '../../lib/ui/css/round';
@@ -13,7 +12,8 @@ import { HStack, VStack } from '../../lib/ui/layout/Stack';
 import { Panel } from '../../lib/ui/panel/Panel';
 import { Text } from '../../lib/ui/text';
 import { getColor } from '../../lib/ui/theme/getters';
-import { useFiatCurrency } from '../../preferences/state/fiatCurrency';
+import { sum } from '@lib/utils/array/sum';
+import { formatAmount } from '@lib/utils/formatAmount';
 import { BalanceVisibilityAware } from '../balance/visibility/BalanceVisibilityAware';
 import { VaultChainBalance } from '../queries/useVaultChainsBalancesQuery';
 import { useCurrentVaultAddreses } from '../state/currentVault';
@@ -34,7 +34,7 @@ type VaultChainItemProps = {
 
 export const VaultChainItem = ({ vault }: VaultChainItemProps) => {
   const { chain, coins } = vault;
-  const [fiatCurrency] = useFiatCurrency();
+  const { globalCurrency } = useGlobalCurrency();
 
   const addresses = useCurrentVaultAddreses();
   const address = addresses[chain];
@@ -92,7 +92,7 @@ export const VaultChainItem = ({ vault }: VaultChainItemProps) => {
               ) : null}
               <Text centerVertically color="contrast" weight="700" size={16}>
                 <BalanceVisibilityAware>
-                  {formatAmount(totalAmount, fiatCurrency)}
+                  {formatAmount(totalAmount, globalCurrency)}
                 </BalanceVisibilityAware>
               </Text>
             </HStack>

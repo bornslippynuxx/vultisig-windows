@@ -1,7 +1,3 @@
-import { EntityWithLogo } from '@lib/utils/entities/EntityWithLogo';
-import { EntityWithTicker } from '@lib/utils/entities/EntityWithTicker';
-import { formatAmount } from '@lib/utils/formatAmount';
-
 import { EntityWithPrice } from '../../chain/EntityWithPrice';
 import { ChainCoinIcon } from '../../chain/ui/ChainCoinIcon';
 import { fromChainAmount } from '../../chain/utils/fromChainAmount';
@@ -9,10 +5,13 @@ import { getChainEntityIconSrc } from '../../chain/utils/getChainEntityIconSrc';
 import { isNativeCoin } from '../../chain/utils/isNativeCoin';
 import { CoinAmount, CoinKey } from '../../coin/Coin';
 import { getCoinMetaIconSrc } from '../../coin/utils/coinMeta';
+import { useGlobalCurrency } from '../../lib/hooks/useGlobalCurrency';
 import { HStack, VStack } from '../../lib/ui/layout/Stack';
 import { ValueProp } from '../../lib/ui/props';
 import { Text } from '../../lib/ui/text';
-import { useFiatCurrency } from '../../preferences/state/fiatCurrency';
+import { EntityWithLogo } from '@lib/utils/entities/EntityWithLogo';
+import { EntityWithTicker } from '@lib/utils/entities/EntityWithTicker';
+import { formatAmount } from '@lib/utils/formatAmount';
 import { BalanceVisibilityAware } from '../balance/visibility/BalanceVisibilityAware';
 import { shouldDisplayChainLogo } from './utils';
 
@@ -26,7 +25,7 @@ export const VaultChainCoinItem = ({
     CoinKey
 >) => {
   const { logo, ticker, amount, decimals, price, id, chain } = value;
-  const [fiatCurrency] = useFiatCurrency();
+  const { globalCurrency } = useGlobalCurrency();
   const balance = fromChainAmount(amount, decimals);
 
   return (
@@ -53,7 +52,7 @@ export const VaultChainCoinItem = ({
           </Text>
           <Text color="contrast" size={18} weight="700" centerVertically>
             <BalanceVisibilityAware>
-              {formatAmount(balance * (price || 0), fiatCurrency)}
+              {formatAmount(balance * (price || 0), globalCurrency)}
             </BalanceVisibilityAware>
           </Text>
         </HStack>
