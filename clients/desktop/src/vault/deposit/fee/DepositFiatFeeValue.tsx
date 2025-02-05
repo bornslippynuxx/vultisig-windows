@@ -1,13 +1,13 @@
-import { formatAmount } from '@lib/utils/formatAmount';
-
 import { getFeeAmount } from '../../../chain/tx/fee/utils/getFeeAmount';
 import { fromChainAmount } from '../../../chain/utils/fromChainAmount';
 import { chainFeeCoin } from '../../../coin/chainFeeCoin';
 import { useCoinPriceQuery } from '../../../coin/query/useCoinPriceQuery';
-import { getStorageCoinKey } from '../../../coin/utils/storageCoin';
+import { storageCoinToCoin } from '../../../coin/utils/storageCoin';
+import { useGlobalCurrency } from '../../../lib/hooks/useGlobalCurrency';
 import { Spinner } from '../../../lib/ui/loaders/Spinner';
 import { MatchQuery } from '../../../lib/ui/query/components/MatchQuery';
-import { useFiatCurrency } from '../../../preferences/state/fiatCurrency';
+import { formatAmount } from '@lib/utils/formatAmount';
+import { CoinMeta } from '../../../model/coin-meta';
 import { useCurrentVaultCoin } from '../../state/currentVault';
 import { useCurrentDepositCoin } from '../hooks/useCurrentDepositCoin';
 import { useDepositChainSpecific } from './DepositChainSpecificProvider';
@@ -15,14 +15,11 @@ import { useDepositChainSpecific } from './DepositChainSpecificProvider';
 export const DepositFiatFeeValue = () => {
   const [coinKey] = useCurrentDepositCoin();
   const coin = useCurrentVaultCoin(coinKey);
-  const priceQuery = useCoinPriceQuery({
-    coin: {
-      ...getStorageCoinKey(coin),
-      priceProviderId: coin.price_provider_id,
-    },
-  });
+  const priceQuery = useCoinPriceQuery(
+    CoinMeta.fromCoin(storageCoinToCoin(coin))
+  );
 
-  const [fiatCurrency] = useFiatCurrency();
+  const { globalCurrency } = useGlobalCurrency();
 
   const chainSpecific = useDepositChainSpecific();
 
@@ -38,7 +35,7 @@ export const DepositFiatFeeValue = () => {
       pending={() => <Spinner />}
       error={() => null}
       success={price => {
-        const formattedAmount = formatAmount(feeAmount * price, fiatCurrency);
+        const formattedAmount = formatAmount(feeAmount * price, globalCurrency);
 
         return formattedAmount;
       }}

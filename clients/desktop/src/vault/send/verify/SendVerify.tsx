@@ -1,5 +1,3 @@
-import { range } from '@lib/utils/array/range';
-import { formatAmount } from '@lib/utils/formatAmount';
 import { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -13,12 +11,15 @@ import {
 import { useFormatFiatAmount } from '../../../chain/ui/hooks/useFormatFiatAmount';
 import { fromChainAmount } from '../../../chain/utils/fromChainAmount';
 import { useCoinPriceQuery } from '../../../coin/query/useCoinPriceQuery';
-import { getStorageCoinKey } from '../../../coin/utils/storageCoin';
+import { storageCoinToCoin } from '../../../coin/utils/storageCoin';
 import { VStack } from '../../../lib/ui/layout/Stack';
 import { Spinner } from '../../../lib/ui/loaders/Spinner';
 import { OnBackProp } from '../../../lib/ui/props';
 import { MatchQuery } from '../../../lib/ui/query/components/MatchQuery';
 import { Text } from '../../../lib/ui/text';
+import { range } from '@lib/utils/array/range';
+import { formatAmount } from '@lib/utils/formatAmount';
+import { CoinMeta } from '../../../model/coin-meta';
 import { PageContent } from '../../../ui/page/PageContent';
 import { PageHeader } from '../../../ui/page/PageHeader';
 import { PageHeaderBackButton } from '../../../ui/page/PageHeaderBackButton';
@@ -44,13 +45,9 @@ export const SendVerify: FC<OnBackProp> = ({ onBack }) => {
   const [receiver] = useSendReceiver();
   const [memo] = useSendMemo();
   const formatFiat = useFormatFiatAmount();
-
-  const coinPriceQuery = useCoinPriceQuery({
-    coin: {
-      ...getStorageCoinKey(coin),
-      priceProviderId: coin.price_provider_id,
-    },
-  });
+  const coinPriceQuery = useCoinPriceQuery(
+    CoinMeta.fromCoin(storageCoinToCoin(coin))
+  );
 
   const cappedAmountQuery = useSendCappedAmountQuery();
 
