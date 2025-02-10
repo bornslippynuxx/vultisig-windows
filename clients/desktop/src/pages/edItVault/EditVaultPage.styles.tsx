@@ -11,6 +11,10 @@ export const ListItemPanel = styled(Panel)`
   font-size: 16px;
   color: ${getColor('contrast')};
   background-color: ${getColor('foreground')};
+
+  &:hover {
+    background-color: ${getColor('foregroundExtra')};
+  }
 `;
 
 export const Container = styled(VStack)`
