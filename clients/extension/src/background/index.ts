@@ -49,6 +49,23 @@ import {
 } from 'ethers'
 import { v4 as uuidv4 } from 'uuid'
 
+if (!navigator.userAgent.toLowerCase().includes('firefox')) {
+  ;[
+    Object,
+    Object.prototype,
+    Function,
+    Function.prototype,
+    Array,
+    Array.prototype,
+    String,
+    String.prototype,
+    Number,
+    Number.prototype,
+    Boolean,
+    Boolean.prototype,
+  ].forEach(Object.freeze)
+}
+
 let rpcProvider: JsonRpcProvider
 
 const instance = {
