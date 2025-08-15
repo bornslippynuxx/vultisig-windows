@@ -70,6 +70,14 @@ frontend/.parcel-cache/
 # TypeScript cache
 *.tsbuildinfo
 
+# Generated TypeScript compilation artifacts from CLI build
+core/mpc/types/**/*.d.ts
+core/mpc/types/**/*.js
+core/mpc/types/**/*.js.map
+lib/utils/**/*.d.ts
+lib/utils/**/*.js
+lib/utils/**/*.js.map
+
 # Ignore compiled Go files
 *.o
 *.a
