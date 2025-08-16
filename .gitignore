@@ -70,6 +70,14 @@ frontend/.parcel-cache/
 # TypeScript cache
 *.tsbuildinfo
 
+# Generated TypeScript files in core and lib
+core/**/*.js
+core/**/*.d.ts
+core/**/*.js.map
+lib/**/*.js
+lib/**/*.d.ts
+lib/**/*.js.map
+
 # Ignore compiled Go files
 *.o
 *.a
