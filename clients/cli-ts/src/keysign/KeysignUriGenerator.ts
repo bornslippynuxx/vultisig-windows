@@ -4,7 +4,8 @@ import { KeysignPayload } from '@core/mpc/types/vultisig/keysign/v1/keysign_mess
 import * as crypto from 'crypto'
 import { compress } from 'node-7z'
 import { promises as fs } from 'fs'
-import * as path from 'os'
+import * as path from 'path'
+import * as os from 'os'
 
 export interface KeysignUriOptions {
   sessionId: string
@@ -72,7 +73,7 @@ export class KeysignUriGenerator {
     const binaryData = toBinary(KeysignMessageSchema, message)
     
     // Create temporary files for compression
-    const tempDir = path.tmpdir()
+    const tempDir = os.tmpdir()
     const inputFile = path.join(tempDir, `keysign-input-${Date.now()}.bin`)
     const outputFile = path.join(tempDir, `keysign-output-${Date.now()}.7z`)
     

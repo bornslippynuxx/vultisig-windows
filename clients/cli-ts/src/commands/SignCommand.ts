@@ -3,15 +3,13 @@ import * as crypto from 'crypto'
 import * as net from 'net'
 import { VaultLoader } from '../vault/VaultLoader'
 import { DaemonManager } from '../daemon/DaemonManager'
+import { MpcServerManager, MpcServerType } from '../keysign/MpcServerManager'
 
 export interface SignOptions {
   network: string
   mode?: string
   sessionId?: string
   payloadFile?: string
-  vault?: string
-  password?: string
-  messageType?: string
 }
 
 export class SignCommand {
@@ -23,9 +21,8 @@ export class SignCommand {
       throw new Error('--network is required')
     }
     
-    if (!options.messageType) {
-      throw new Error('--messageType is required (e.g., eth_tx, btc_psbt, sol_tx)')
-    }
+    // Infer message type from network
+    const messageType = this.getMessageTypeForNetwork(options.network)
     
     // Validate mode
     const mode = options.mode || 'relay'
@@ -33,20 +30,7 @@ export class SignCommand {
       throw new Error('--mode must be "local" or "relay"')
     }
     
-    // Load vault
-    const vaultPath = options.vault || './keyshares/test-vault.dat'
-    const password = options.password || 'password'
-    
-    console.log(`🔑 Loading vault from: ${vaultPath}`)
-    
-    let vaultData
-    try {
-      const vaultLoader = new VaultLoader()
-      vaultData = await vaultLoader.loadVaultFromFile(vaultPath, password)
-      console.log(`✅ Vault loaded: ${vaultData.name} (${vaultData.keyShares.length} keyshares)`)
-    } catch (error) {
-      throw new Error(`Failed to load vault: ${error instanceof Error ? error.message : error}`)
-    }
+    console.log('📡 Using vault already loaded in daemon...')
     
     // Read payload
     let payloadData: any
@@ -77,7 +61,7 @@ export class SignCommand {
     
     console.log('\n🔐 Starting MPC transaction signing...')
     console.log(`Network: ${options.network.toUpperCase()}`)
-    console.log(`Message Type: ${options.messageType}`)
+    console.log(`Message Type: ${messageType}`)
     console.log(`Mode: ${mode}`)
     console.log(`Session ID: ${sessionId}`)
     
@@ -92,9 +76,8 @@ export class SignCommand {
       const serverConfig = await serverManager.startServer(mode as MpcServerType, `cli-${sessionId}`)
       console.log(`🌐 MPC Server: ${serverConfig.url}`)
       
-      // Start daemon if not running
-      const daemonManager = new DaemonManager()
-      await daemonManager.startDaemon(vaultPath, password, vaultData)
+      // Connect to running daemon
+      console.log('🔌 Connecting to daemon...')
       
       // Setup cleanup on exit
       const cleanup = async () => {
@@ -123,7 +106,7 @@ export class SignCommand {
           scheme: this.getSchemeForNetwork(options.network),
           curve: this.getCurveForNetwork(options.network),
           network: options.network,
-          messageType: options.messageType,
+          messageType: messageType,
           payload: payloadData,
           policyContext: {
             sessionId,
@@ -242,5 +225,40 @@ export class SignCommand {
     // Ed25519 networks
     const ed25519Networks = ['sol', 'ada', 'ton', 'sui']
     return ed25519Networks.includes(network.toLowerCase()) ? 'ed25519' : 'secp256k1'
+  }
+  
+  private getMessageTypeForNetwork(network: string): string {
+    const networkLower = network.toLowerCase()
+    
+    // Map networks to their standard message types
+    const messageTypeMap: Record<string, string> = {
+      // EVM chains - all use eth_tx
+      'eth': 'eth_tx',
+      'matic': 'eth_tx', 
+      'bsc': 'eth_tx',
+      'avax': 'eth_tx',
+      'optimism': 'eth_tx',
+      'arbitrum': 'eth_tx',
+      'base': 'eth_tx',
+      
+      // UTXO chains
+      'btc': 'btc_psbt',
+      'ltc': 'btc_psbt', 
+      'doge': 'btc_psbt',
+      
+      // Other chains
+      'sol': 'sol_tx',
+      'atom': 'cosmos_tx',
+      'thor': 'cosmos_tx',
+      'maya': 'cosmos_tx',
+      'ada': 'cardano_tx',
+      'dot': 'polkadot_tx',
+      'xrp': 'ripple_tx',
+      'trx': 'tron_tx',
+      'sui': 'sui_tx',
+      'ton': 'ton_tx'
+    }
+    
+    return messageTypeMap[networkLower] || 'eth_tx'
   }
 }

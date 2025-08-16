@@ -141,8 +141,8 @@ export class JsonRpcServer {
   private async handleGetAddress(request: JsonRpcRequest): Promise<JsonRpcResponse> {
     try {
       // Import the address derivation logic
-      const { SimpleAddressDeriver } = await import('../address/SimpleAddressDeriver')
-      const deriver = new SimpleAddressDeriver()
+      const { AddressDeriver } = await import('../address/AddressDeriver')
+      const deriver = new AddressDeriver()
       
       // Map network to chain for address derivation (keep as-is since they match SupportedChain type)
       const networkChainMap: Record<string, string> = {

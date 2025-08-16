@@ -1,7 +1,7 @@
 import * as path from 'path'
 import { getKeyshareDir, findVultFiles } from '../utils/paths'
 import { VaultLoader } from '../vault/VaultLoader'
-import { SimpleAddressDeriver as AddressDeriver, parseNetworksString, SupportedChain, CHAIN_NAMES } from '../address/SimpleAddressDeriver'
+import { AddressDeriver, parseNetworksString, SupportedChain, CHAIN_NAMES } from '../address/AddressDeriver'
 import { promptForPasswordWithValidation } from '../utils/password'
 
 export interface AddressOptions {

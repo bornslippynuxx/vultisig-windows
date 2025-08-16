@@ -16,12 +16,31 @@ export interface KeysignWebServerOptions {
   onSigningError?: (error: Error) => void
 }
 
+export type KeysignStatus = 
+  | 'waiting_for_mobile'
+  | 'peer_discovered' 
+  | 'joining'
+  | 'round1'
+  | 'round2' 
+  | 'round3'
+  | 'complete'
+  | 'success'
+  | 'error'
+
 export class KeysignWebServer {
   private app: express.Application
   private server?: http.Server
   private options: KeysignWebServerOptions
   private uriGenerator: KeysignUriGenerator
   private qrGenerator: QrCodeGenerator
+  
+  // Status tracking
+  private currentStatus: KeysignStatus = 'waiting_for_mobile'
+  private statusMessage: string = 'Waiting for mobile app to scan QR code...'
+  private connectedPeers: string[] = []
+  private signingComplete: boolean = false
+  private txHash?: string
+  private errorMessage?: string
   
   constructor(options: KeysignWebServerOptions) {
     this.options = options
@@ -34,7 +53,8 @@ export class KeysignWebServer {
   
   private setupRoutes() {
     // Serve static assets (CSS, JS, images)
-    this.app.use('/static', express.static(path.join(__dirname, '../../../web/static')))
+    // For ts-node, __dirname is in src/web, so we go up two levels to reach web/static
+    this.app.use('/static', express.static(path.join(__dirname, '../../web/static')))
     
     // Main keysign page
     this.app.get('/', async (req, res) => {
@@ -93,12 +113,13 @@ export class KeysignWebServer {
     
     // Status updates endpoint (WebSocket would be better, but keeping it simple)
     this.app.get('/api/status', (req, res) => {
-      // In a real implementation, this would check the actual signing status
       res.json({
-        status: 'waiting_for_mobile',
-        message: 'Waiting for mobile app to scan QR code...',
-        peers: [],
-        signingComplete: false
+        status: this.currentStatus,
+        message: this.statusMessage,
+        peers: this.connectedPeers,
+        signingComplete: this.signingComplete,
+        txHash: this.txHash,
+        error: this.errorMessage
       })
     })
     
@@ -113,7 +134,7 @@ export class KeysignWebServer {
     
     return this.uriGenerator.generateKeysignUri({
       sessionId: sessionParams.sessionId,
-      vaultId: this.options.vaultData.uid || 'default',
+      vaultId: this.options.vaultData.name || 'default',
       keysignPayload: this.options.keysignPayload,
       useVultisigRelay: this.options.useVultisigRelay,
       serviceName: sessionParams.serviceName,
@@ -254,5 +275,50 @@ export class KeysignWebServer {
         resolve()
       }
     })
+  }
+  
+  // Status update methods for external use
+  updateStatus(status: KeysignStatus, message?: string) {
+    this.currentStatus = status
+    if (message) {
+      this.statusMessage = message
+    }
+    console.log(`🔄 Keysign status: ${status} - ${this.statusMessage}`)
+  }
+  
+  addPeer(peerId: string) {
+    if (!this.connectedPeers.includes(peerId)) {
+      this.connectedPeers.push(peerId)
+      this.updateStatus('peer_discovered', `Connected to ${this.connectedPeers.length} device(s)`)
+    }
+  }
+  
+  removePeer(peerId: string) {
+    this.connectedPeers = this.connectedPeers.filter(id => id !== peerId)
+  }
+  
+  setSigningComplete(success: boolean, txHash?: string, error?: string) {
+    this.signingComplete = true
+    if (success) {
+      this.currentStatus = 'success'
+      this.statusMessage = 'Transaction signed and broadcasted successfully!'
+      this.txHash = txHash
+    } else {
+      this.currentStatus = 'error'
+      this.statusMessage = error || 'Signing failed'
+      this.errorMessage = error
+    }
+  }
+  
+  // Get current status for external monitoring
+  getStatus() {
+    return {
+      status: this.currentStatus,
+      message: this.statusMessage,
+      peers: this.connectedPeers,
+      signingComplete: this.signingComplete,
+      txHash: this.txHash,
+      error: this.errorMessage
+    }
   }
 }

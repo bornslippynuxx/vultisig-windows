@@ -49,10 +49,10 @@ const TEST_CHAINS = ['btc', 'eth', 'sol', 'ltc', 'doge', 'ada', 'thor', 'atom', 
 
 async function runAddressDerivationTests() {
   const { VaultLoader } = require('../dist/clients/cli-ts/src/vault/VaultLoader.js');
-  const { SimpleAddressDeriver } = require('../dist/clients/cli-ts/src/address/SimpleAddressDeriver.js');
+  const { AddressDeriver } = require('../dist/clients/cli-ts/src/address/AddressDeriver.js');
   
   const loader = new VaultLoader();
-  const deriver = new SimpleAddressDeriver();
+  const deriver = new AddressDeriver();
   const keyshareDir = path.join(__dirname, '..', 'keyshares');
   
   let totalTests = 0;
@@ -114,7 +114,7 @@ async function runAddressDerivationTests() {
       for (const chainKey of TEST_CHAINS) {
         try {
           const chainName = getChainDisplayName(chainKey);
-          const address = await deriver.deriveAddressForChain(vault, chainKey);
+          const address = await deriver.deriveAddressForSingleChain(vault, chainKey);
           const expectedAddr = expected[chainName];
           
           test(`${chainName} address derived`, !!address);

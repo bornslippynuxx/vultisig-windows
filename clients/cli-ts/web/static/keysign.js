@@ -125,11 +125,40 @@ class KeysignInterface {
         this.showToast('Mobile app connected!', 'success')
         break
         
-      case 'signing':
+      case 'joining':
         statusIndicator.classList.add('signing')
         statusIcon.innerHTML = '<div class="spinner"></div>'
-        statusTitle.textContent = 'Signing Transaction'
-        statusMessage.textContent = 'Please approve the transaction on your mobile device'
+        statusTitle.textContent = 'Starting Session'
+        statusMessage.textContent = 'All parties joining the signing session...'
+        break
+        
+      case 'signing':
+      case 'round1':
+        statusIndicator.classList.add('signing')
+        statusIcon.innerHTML = '<div class="spinner"></div>'
+        statusTitle.textContent = 'MPC Signing - Round 1'
+        statusMessage.textContent = 'Multi-party signature generation in progress...'
+        break
+        
+      case 'round2':
+        statusIndicator.classList.add('signing')
+        statusIcon.innerHTML = '<div class="spinner"></div>'
+        statusTitle.textContent = 'MPC Signing - Round 2'
+        statusMessage.textContent = 'Continuing signature computation...'
+        break
+        
+      case 'round3':
+        statusIndicator.classList.add('signing')
+        statusIcon.innerHTML = '<div class="spinner"></div>'
+        statusTitle.textContent = 'MPC Signing - Round 3'
+        statusMessage.textContent = 'Finalizing signature...'
+        break
+        
+      case 'complete':
+        statusIndicator.classList.add('signing')
+        statusIcon.innerHTML = '<div class="spinner"></div>'
+        statusTitle.textContent = 'Broadcasting Transaction'
+        statusMessage.textContent = 'Signature complete, broadcasting to network...'
         break
         
       case 'success':
