@@ -1,13 +1,13 @@
-import { InpageBackgroundChannelContext } from '../../channels/inpageBackground/context'
+import { BridgeContext } from '@core/inpage-provider/bridge/context'
+import { Resolver } from '@lib/utils/types/Resolver'
+
 import { BackgroundApiInterface } from './interface'
 
-export type BackgroundApiResolverParams<
-  K extends keyof BackgroundApiInterface,
-> = {
-  input: BackgroundApiInterface[K]['input']
-  context: InpageBackgroundChannelContext
-}
-
-export type BackgroundApiResolver<K extends keyof BackgroundApiInterface> = (
-  params: BackgroundApiResolverParams<K>
-) => Promise<BackgroundApiInterface[K]['output']>
+export type BackgroundApiResolver<K extends keyof BackgroundApiInterface> =
+  Resolver<
+    {
+      input: BackgroundApiInterface[K]['input']
+      context: BridgeContext
+    },
+    Promise<BackgroundApiInterface[K]['output']>
+  >
