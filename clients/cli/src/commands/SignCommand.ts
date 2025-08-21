@@ -2,12 +2,15 @@ import * as fs from 'fs'
 import * as crypto from 'crypto'
 import * as net from 'net'
 import { MpcServerManager, MpcServerType } from '../keysign/MpcServerManager'
+import { VultiServerClient } from '../utils/VultiServerClient'
 
 export interface SignOptions {
   network: string
   mode?: string
   sessionId?: string
   payloadFile?: string
+  fast?: boolean
+  password?: string
 }
 
 export class SignCommand {
@@ -17,6 +20,15 @@ export class SignCommand {
     // Validate required parameters
     if (!options.network) {
       throw new Error('--network is required')
+    }
+    
+    // Validate fast mode requirements
+    if (options.fast) {
+      if (!options.password) {
+        throw new Error('--password is mandatory when using --fast mode')
+      }
+      // Fast mode uses VultiServer directly, no need for daemon
+      return this.runFastMode(options)
     }
     
     // Infer message type from network
@@ -186,6 +198,82 @@ export class SignCommand {
       
     } catch (error) {
       console.error('❌ Signing failed:', error instanceof Error ? error.message : error)
+      throw error
+    }
+  }
+
+  private async runFastMode(options: SignOptions): Promise<void> {
+    console.log('⚡ Using fast mode with VultiServer...')
+    
+    // Read payload
+    let payloadData: any
+    if (options.payloadFile) {
+      const payloadBuffer = await fs.promises.readFile(options.payloadFile)
+      try {
+        payloadData = JSON.parse(payloadBuffer.toString())
+      } catch {
+        // If not JSON, treat as raw data
+        payloadData = { raw: payloadBuffer.toString('hex') }
+      }
+    } else {
+      // Read from stdin
+      const payloadBuffer = await this.readFromStdin()
+      if (payloadBuffer.length === 0) {
+        throw new Error('No transaction payload provided')
+      }
+      try {
+        payloadData = JSON.parse(payloadBuffer.toString())
+      } catch {
+        // If not JSON, treat as raw data
+        payloadData = { raw: payloadBuffer.toString('hex') }
+      }
+    }
+
+    const vultiServerClient = new VultiServerClient()
+    
+    try {
+      // Step 1: Detect if vault exists on VultiServer
+      console.log('🔍 Checking if vault exists on VultiServer...')
+      const vaultExists = await vultiServerClient.checkVaultExists(options.password!)
+      
+      if (!vaultExists) {
+        throw new Error('Vault not found on VultiServer. Fast mode requires vault to be stored on VultiServer.')
+      }
+      
+      console.log('✅ Vault found on VultiServer')
+      
+      // Step 2: Sign with VultiServer
+      console.log('🔐 Signing transaction with VultiServer...')
+      
+      // Auto-generate session ID if not provided
+      const sessionId = options.sessionId || this.generateSessionID()
+      
+      const result = await vultiServerClient.signTransaction({
+        network: options.network,
+        payload: payloadData,
+        password: options.password!,
+        sessionId,
+        messageType: this.getMessageTypeForNetwork(options.network),
+        scheme: this.getSchemeForNetwork(options.network)
+      })
+      
+      console.log('\n✅ Transaction signed successfully with VultiServer!')
+      console.log('📝 Signature:', result.signature)
+      
+      if (result.signedPsbtBase64) {
+        console.log('📄 Signed PSBT:', result.signedPsbtBase64)
+      }
+      
+      if (result.finalTxHex) {
+        console.log('🔗 Final Transaction:', result.finalTxHex)
+      }
+      
+      if (result.raw) {
+        console.log('📋 Raw Transaction:', result.raw)
+      }
+      
+    } catch (error) {
+      console.error('❌ Fast mode signing failed:', error instanceof Error ? error.message : error)
       throw error
     }
   }

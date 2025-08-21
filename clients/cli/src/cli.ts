@@ -104,6 +104,8 @@ program
   .option('--mode <mode>', 'Signing mode: local or relay', 'relay')
   .option('--session-id <id>', 'Custom session ID')
   .option('--payload-file <file>', 'Transaction payload JSON file')
+  .option('--fast', 'Use fast mode with VultiServer (requires --password)')
+  .option('--password <password>', 'VultiServer decryption password (required for --fast mode)')
   .action(async (options) => {
     try {
       await signCommand.run(options)

@@ -227,10 +227,12 @@ vultisig sign --network <NETWORK> [options]
 - `--mode <mode>` - Signing mode: local or relay (default: relay)
 - `--session-id <id>` - Custom session ID (auto-generated if empty)
 - `--payload-file <file>` - Transaction payload JSON file (stdin if empty)
+- `--fast` - Use fast mode with VultiServer (requires `--password`)
+- `--password <password>` - VultiServer decryption password (mandatory for `--fast` mode)
 
 **Examples:**
 ```bash
-# Sign Ethereum transaction from file
+# Sign Ethereum transaction from file (standard mode)
 vultisig sign --network eth --payload-file transaction.json
 
 # Sign Bitcoin transaction from stdin
@@ -238,9 +240,24 @@ echo '{"to":"bc1...","amount":"0.001"}' | vultisig sign --network btc
 
 # Local signing mode
 vultisig sign --network sol --mode local --payload-file sol-tx.json
+
+# Fast mode with VultiServer (requires vault to be stored on VultiServer)
+vultisig sign --network eth --fast --password myVultiServerPassword --payload-file transaction.json
+
+# Fast mode from stdin
+echo '{"to":"0x...","amount":"0.1"}' | vultisig sign --network eth --fast --password myVultiServerPassword
 ```
 
-**Note:** This command requires a running daemon started with `vultisig run`. If no daemon is running, you'll get an error message: "No Vultisig daemon running, start with 'vultisig run' first".
+**⚡ Fast Mode with VultiServer:**
+Fast mode (`--fast`) enables direct signing through VultiServer without requiring a local daemon. This mode:
+1. **Requires `--password`**: The VultiServer decryption password (not your local vault password)
+2. **Detects vault presence**: Automatically checks if your vault exists on VultiServer using the `vault/get{}` endpoint
+3. **Signs directly**: Uses VultiServer's `vault/sign` endpoint for transaction signing
+4. **No daemon needed**: Bypasses the local daemon architecture for faster signing
+
+**Note**: The `--password` for fast mode is the **VultiServer decryption password** that you set when uploading your vault to VultiServer, not your local vault password.
+
+**Note:** Standard signing modes (local/relay) require a running daemon started with `vultisig run`. Fast mode (`--fast`) bypasses the daemon and connects directly to VultiServer.
 
 ---
 
