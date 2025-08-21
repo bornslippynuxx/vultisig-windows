@@ -249,11 +249,12 @@ echo '{"to":"0x...","amount":"0.1"}' | vultisig sign --network eth --fast --pass
 ```
 
 **⚡ Fast Mode with VultiServer:**
-Fast mode (`--fast`) enables direct signing through VultiServer without requiring a local daemon. This mode:
+Fast mode (`--fast`) enables MPC signing ceremony directly between CLI and VultiServer without requiring mobile devices. This mode:
 1. **Requires `--password`**: The VultiServer decryption password (not your local vault password)
-2. **Detects vault presence**: Automatically checks if your vault exists on VultiServer using the `vault/get{}` endpoint
-3. **Signs directly**: Uses VultiServer's `vault/sign` endpoint for transaction signing
-4. **No daemon needed**: Bypasses the local daemon architecture for faster signing
+2. **Requires local vault**: CLI loads local vault keyshare to participate in MPC ceremony
+3. **MPC ceremony**: Both CLI and VultiServer participate in full MPC protocol using WASM libraries
+4. **Message routing**: VultiServer API routes MPC messages between CLI and server
+5. **No daemon needed**: Bypasses the local daemon architecture but still requires MPC computation
 
 **Note**: The `--password` for fast mode is the **VultiServer decryption password** that you set when uploading your vault to VultiServer, not your local vault password.
 

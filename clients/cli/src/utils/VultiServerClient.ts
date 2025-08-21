@@ -1,17 +1,19 @@
 import * as crypto from 'crypto'
 import * as https from 'https'
 import * as http from 'http'
+import { VaultLoader } from '../vault/VaultLoader'
 
-export interface SignTransactionInput {
+export interface FastMpcSigningInput {
   network: string
   payload: any
   password: string
   sessionId: string
   messageType: string
   scheme: 'ecdsa' | 'eddsa'
+  vaultPath?: string
 }
 
-export interface SignTransactionResult {
+export interface FastMpcSigningResult {
   signature: string
   signedPsbtBase64?: string
   finalTxHex?: string
@@ -25,13 +27,8 @@ export class VultiServerClient {
    * Check if vault exists on VultiServer by attempting to get vault info
    * Uses the vault/get/{vaultId} endpoint with password in x-password header
    */
-  async checkVaultExists(password: string): Promise<boolean> {
+  async checkVaultExists(password: string, vaultId: string): Promise<boolean> {
     try {
-      // For vault detection, we need to derive a vault ID from the current vault
-      // This is a simplified approach - in practice, we'd need the actual vault ID
-      // For now, we'll attempt a generic check
-      const vaultId = await this.deriveVaultId(password)
-      
       const url = `${this.baseUrl}/get/${vaultId}`
       const response = await this.makeRequest(url, {
         method: 'GET',
@@ -49,60 +46,59 @@ export class VultiServerClient {
   }
 
   /**
-   * Sign transaction using VultiServer vault/sign endpoint
+   * Perform MPC signing ceremony with VultiServer
+   * This requires local vault participation + server participation
    */
-  async signTransaction(input: SignTransactionInput): Promise<SignTransactionResult> {
-    const vaultId = await this.deriveVaultId(input.password)
+  async performMpcSigning(input: FastMpcSigningInput): Promise<FastMpcSigningResult> {
+    // Load local vault for MPC participation
+    const vaultLoader = new VaultLoader()
+    const vault = await this.loadLocalVault(input.vaultPath)
     
-    // Extract messages from payload based on network type
+    if (!vault) {
+      throw new Error('Local vault not found. Fast mode requires local vault for MPC participation.')
+    }
+
+    // Get vault ID from local vault public key
+    const vaultId = vault.publicKeyEcdsa || vault.publicKeyEddsa
+    
+    // Check if vault exists on server
+    const vaultExists = await this.checkVaultExists(input.password, vaultId)
+    if (!vaultExists) {
+      throw new Error('Vault not found on VultiServer. Fast mode requires vault to be stored on VultiServer.')
+    }
+
+    // Extract messages to sign from payload
     const messages = this.extractMessagesFromPayload(input.payload, input.network)
     
-    const signRequest = {
-      public_key: await this.getPublicKey(vaultId, input.password, input.scheme),
-      messages,
-      session: input.sessionId,
-      hex_encryption_key: crypto.randomBytes(32).toString('hex'),
-      derive_path: this.getDerivationPath(input.network),
-      is_ecdsa: input.scheme === 'ecdsa',
-      vault_password: input.password
-    }
-
-    const url = `${this.baseUrl}/sign`
-    const response = await this.makeRequest(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(signRequest)
-    })
-
-    if (response.status !== 200) {
-      const error = await response.text()
-      throw new Error(`VultiServer signing failed: ${error}`)
-    }
-
-    const result = await response.json()
+    // This is where we would implement the full MPC ceremony
+    // For now, throw an error indicating this needs proper MPC implementation
+    throw new Error('Full MPC ceremony implementation needed - this requires WASM libraries and proper MPC protocol implementation')
     
-    return {
-      signature: result.signature || result.r + result.s,
-      signedPsbtBase64: result.signedPsbtBase64,
-      finalTxHex: result.finalTxHex,
-      raw: result.raw
-    }
+    // TODO: Implement proper MPC ceremony:
+    // 1. Initialize WASM libraries (DKLS for ECDSA, Schnorr for EdDSA)
+    // 2. Setup MPC session with VultiServer as peer
+    // 3. Exchange MPC messages through VultiServer API
+    // 4. Complete signing ceremony and return signatures
   }
 
   /**
-   * Derive vault ID from password (simplified approach)
-   * In practice, this would be based on the actual vault's public key or other identifier
+   * Load local vault for MPC participation
    */
-  private async deriveVaultId(password: string): Promise<string> {
-    // This is a placeholder implementation
-    // In the real implementation, we'd need to:
-    // 1. Load the local vault to get its public key or identifier
-    // 2. Use that as the vault ID for the server lookup
-    // For now, we'll use a hash of the password as a simple approach
-    const hash = crypto.createHash('sha256').update(password).digest('hex')
-    return hash.substring(0, 16) // Use first 16 chars as vault ID
+  private async loadLocalVault(vaultPath?: string): Promise<any> {
+    const vaultLoader = new VaultLoader()
+    
+    if (vaultPath) {
+      // Load specific vault file
+      return await vaultLoader.loadVault(vaultPath)
+    } else {
+      // Auto-discover vault file
+      const vaultFiles = await vaultLoader.findVaultFiles()
+      if (vaultFiles.length === 0) {
+        return null
+      }
+      // Load first available vault
+      return await vaultLoader.loadVault(vaultFiles[0].path)
+    }
   }
 
   /**

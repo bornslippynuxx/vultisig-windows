@@ -232,23 +232,14 @@ export class SignCommand {
     const vultiServerClient = new VultiServerClient()
     
     try {
-      // Step 1: Detect if vault exists on VultiServer
-      console.log('🔍 Checking if vault exists on VultiServer...')
-      const vaultExists = await vultiServerClient.checkVaultExists(options.password!)
-      
-      if (!vaultExists) {
-        throw new Error('Vault not found on VultiServer. Fast mode requires vault to be stored on VultiServer.')
-      }
-      
-      console.log('✅ Vault found on VultiServer')
-      
-      // Step 2: Sign with VultiServer
-      console.log('🔐 Signing transaction with VultiServer...')
-      
       // Auto-generate session ID if not provided
       const sessionId = options.sessionId || this.generateSessionID()
       
-      const result = await vultiServerClient.signTransaction({
+      // Perform MPC signing ceremony with VultiServer
+      console.log('🔐 Starting MPC signing ceremony with VultiServer...')
+      console.log('⚠️  Note: This requires both local vault and VultiServer participation')
+      
+      const result = await vultiServerClient.performMpcSigning({
         network: options.network,
         payload: payloadData,
         password: options.password!,
