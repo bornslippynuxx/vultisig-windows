@@ -1,8 +1,6 @@
 import * as fs from 'fs'
 import * as crypto from 'crypto'
 import * as net from 'net'
-import { VaultLoader } from '../vault/VaultLoader'
-import { DaemonManager } from '../daemon/DaemonManager'
 import { MpcServerManager, MpcServerType } from '../keysign/MpcServerManager'
 
 export interface SignOptions {
@@ -96,7 +94,12 @@ export class SignCommand {
       })
       
       // Connect to daemon
-      const socket = net.createConnection('/tmp/vultisig.sock')
+      let socket: net.Socket
+      try {
+        socket = net.createConnection('/tmp/vultisig.sock')
+      } catch (error) {
+        throw new Error('No Vultisig daemon running, start with "vultisig run" first')
+      }
       
       // Prepare signing request
       const signingRequest = {
@@ -144,7 +147,11 @@ export class SignCommand {
         })
         
         socket.on('error', (error) => {
-          reject(error)
+          if ((error as any).code === 'ENOENT' || (error as any).code === 'ECONNREFUSED') {
+            reject(new Error('No Vultisig daemon running, start with "vultisig run" first'))
+          } else {
+            reject(error)
+          }
         })
         
         socket.on('connect', () => {
@@ -237,8 +244,8 @@ export class SignCommand {
       'matic': 'eth_tx', 
       'bsc': 'eth_tx',
       'avax': 'eth_tx',
-      'optimism': 'eth_tx',
-      'arbitrum': 'eth_tx',
+      'opt': 'eth_tx',
+      'arb': 'eth_tx',
       'base': 'eth_tx',
       
       // UTXO chains

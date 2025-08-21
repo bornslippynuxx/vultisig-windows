@@ -8,6 +8,7 @@ import { StatusCommand } from './commands/StatusCommand'
 import { AddressCommand } from './commands/AddressCommand'
 import { SignCommand } from './commands/SignCommand'
 import { QuitCommand } from './commands/QuitCommand'
+import { VersionCommand } from './commands/VersionCommand'
 
 const program = new Command()
 
@@ -24,6 +25,7 @@ const statusCommand = new StatusCommand()
 const addressCommand = new AddressCommand()
 const signCommand = new SignCommand()
 const quitCommand = new QuitCommand()
+const versionCommand = new VersionCommand()
 
 // Init command
 program
@@ -84,8 +86,6 @@ program
 program
   .command('address')
   .description(addressCommand.description)
-  .option('--vault <path>', 'Path to keyshare file (.vult)')
-  .option('--password <password>', 'Password for encrypted keyshares')
   .option('--network <networks>', 'Networks (all, or comma-separated: btc,eth,sol)', 'all')
   .action(async (options) => {
     try {
@@ -120,6 +120,19 @@ program
   .action(async () => {
     try {
       await quitCommand.run()
+    } catch (error) {
+      console.error('Error:', error instanceof Error ? error.message : error)
+      process.exit(1)
+    }
+  })
+
+// Version command
+program
+  .command('version')
+  .description(versionCommand.description)
+  .action(async () => {
+    try {
+      await versionCommand.run()
     } catch (error) {
       console.error('Error:', error instanceof Error ? error.message : error)
       process.exit(1)

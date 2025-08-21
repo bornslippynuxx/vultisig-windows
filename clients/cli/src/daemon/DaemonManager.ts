@@ -92,6 +92,94 @@ export class DaemonManager {
       throw new Error('Daemon is not running')
     }
   }
+
+  async getAddresses(networks: string[]): Promise<Record<string, string>> {
+    try {
+      // Check if daemon is running first
+      await this.sendSocketCommand('ping', {})
+    } catch (error) {
+      throw new Error('No Vultisig daemon running, start with "vultisig run" first')
+    }
+
+    const addresses: Record<string, string> = {}
+    
+    // Query each network via JSON-RPC
+    for (const network of networks) {
+      try {
+        const address = await this.getAddressForNetwork(network)
+        addresses[network] = address
+      } catch (error) {
+        addresses[network] = `Error: ${error instanceof Error ? error.message : error}`
+      }
+    }
+    
+    return addresses
+  }
+
+  private async getAddressForNetwork(network: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const socket = net.createConnection(this.socketPath)
+      let buffer = ''
+      
+      // Determine signature scheme based on network
+      const eddsaNetworks = ['sol', 'sui', 'ton']
+      const scheme = eddsaNetworks.includes(network.toLowerCase()) ? 'eddsa' : 'ecdsa'
+      const curve = scheme === 'eddsa' ? 'ed25519' : 'secp256k1'
+      
+      const request = {
+        id: Date.now(),
+        method: 'get_address',
+        params: {
+          scheme,
+          curve,
+          network: network.toLowerCase()
+        }
+      }
+      
+      socket.on('connect', () => {
+        socket.write(JSON.stringify(request) + '\n')
+      })
+      
+      socket.on('data', (data) => {
+        buffer += data.toString()
+        
+        const lines = buffer.split('\n')
+        for (const line of lines) {
+          if (line.trim()) {
+            try {
+              const response = JSON.parse(line)
+              socket.end()
+              
+              if (response.error) {
+                reject(new Error(response.error.message))
+              } else if (response.result?.address) {
+                resolve(response.result.address)
+              } else {
+                reject(new Error('No address in response'))
+              }
+              return
+            } catch (error) {
+              // Continue reading
+            }
+          }
+        }
+      })
+      
+      socket.on('error', (error) => {
+        reject(error)
+      })
+      
+      socket.on('close', () => {
+        reject(new Error('Connection closed without response'))
+      })
+      
+      // Timeout after 10 seconds
+      setTimeout(() => {
+        socket.destroy()
+        reject(new Error('Request timeout'))
+      }, 10000)
+    })
+  }
   
   private async startUnixSocket(): Promise<net.Server> {
     // Remove existing socket if it exists

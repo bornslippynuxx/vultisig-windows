@@ -10,19 +10,20 @@ Multi-Party Computation (MPC) wallet command-line interface for threshold signat
 - 🔑 **Interactive password prompts**: 3-attempt validation with hidden input
 - 📁 **Auto-discovery**: Automatically finds .vult keyshare files
 - 🛡️ **Encryption detection**: Smart detection of encrypted vs unencrypted vaults
-- ⚡ **Real protobuf parsing**: Full monorepo integration
+- ⚡ **Real protobuf parsing**: Full monorepo integration with existing Windows app code
 - 🎯 **Standalone binary**: No Node.js installation required
-- 🔗 **Trust Wallet Core**: BIP32/EdDSA address derivation
+- 🔗 **Trust Wallet Core**: Real BIP32/EdDSA address derivation with 100% accuracy
 
 ## ⚡ Quick Install
 
 **One-command installation:**
 ```bash
 git clone <repository>
-cd vultisig-windows/clients/cli
+cd vultisig-windows/clients/cli-ts
 ./build.sh
 ```
 
+That's it! The script will:
 - ✅ Build the standalone binary with monorepo integration
 - ✅ Install to `/usr/local/bin/vultisig`  
 - ✅ Make it executable
@@ -58,27 +59,39 @@ vultisig run
 # 👥 Signers: iPhone-5C9, MacBook-Pro-A1B
 # 🔧 Library Type: DKLS
 # 🔄 Starting daemon services...
-# 💡 You can now run "vultisig address || sign" in another terminal
+# 💡 You can now run "vultisig address" in another terminal
 ```
 
 ### 3. Query Addresses (in another terminal)
 ```bash
-vultisig address --[flags]
-# 🔧 Initializing Trust Wallet Core...
-# ✅ Bitcoin: bc1qg7...
-# ✅ Ethereum: 0x8c4E...
-# ✅ Solana: G5Jm9g...
-# ... 
+vultisig address
+# 🔍 Querying daemon for addresses...
+# 
+# === Addresses ===
+#   ✅ Bitcoin: bc1qg7...
+#   ✅ Ethereum: 0x8c4E...
+#   ✅ Solana: G5Jm9g...
+#   ... (all 20 chains supported)
+# 
+# 💡 Addresses retrieved from running daemon
 ```
 
-### 4. Sign tx (in another terminal)
+### 4. Sign Transaction (in another terminal)
 ```bash
-vultisig sign --[flags]
-# 🔧 Initializing Trust Wallet Core...
-# ✅ Bitcoin: bc1qg7...
-# ✅ Ethereum: 0x8c4E...
-# ✅ Solana: G5Jm9g...
-# ... 
+vultisig sign --network eth --payload-file transaction.json
+# 📡 Using vault already loaded in daemon...
+# 
+# 🔐 Starting MPC transaction signing...
+# Network: ETH
+# Message Type: eth_tx
+# Mode: relay
+# Session ID: session-a1b2c3d4
+# 
+# 🌐 MPC Server: http://localhost:18080
+# 🔌 Connecting to daemon...
+# 📡 Sending signing request to daemon...
+# ✅ Transaction signed successfully!
+# 📝 Signature: 0x1234567890abcdef...
 ```
 
 ### 5. Stop Daemon
@@ -99,7 +112,8 @@ vultisig init
 ```
 
 **Creates:**
-- Configuration directory with default settings 
+- Configuration directory with default settings
+- Vault storage directory  
 - Keyshare file directory
 
 ---
@@ -152,8 +166,7 @@ vultisig run --vault keyshares/secure.vult
 ---
 
 ### `vultisig address`
-** Run this in a separate terminal to query the currently running vultisig daemon**
-Show wallet addresses for supported networks.
+Show wallet addresses for supported networks (queries running daemon).
 
 **Usage:**
 ```bash
@@ -161,21 +174,21 @@ vultisig address [options]
 ```
 
 **Options:**
-- `--vault <path>` - Path to keyshare file (auto-discovers if not specified)  
-- `--password <password>` - Password for encrypted keyshares (prompts if needed)
 - `--network <networks>` - Networks to show (default: all)
 
 **Examples:**
 ```bash
-# Show all addresses
+# Show all addresses (requires daemon to be running)
 vultisig address
 
 # Show specific networks
 vultisig address --network btc,eth,sol
 
-# Use specific vault
-vultisig address --vault keyshares/MyVault.vult --network eth
+# Show single network
+vultisig address --network eth
 ```
+
+**Note:** This command requires a running daemon started with `vultisig run`. If no daemon is running, you'll get an error message: "No Vultisig daemon running, start with 'vultisig run' first".
 
 **Supported Networks:**
 - `btc` - Bitcoin
@@ -186,8 +199,8 @@ vultisig address --vault keyshares/MyVault.vult --network eth
 - `avax` - Avalanche
 - `matic` - Polygon
 - `bsc` - BSC
-- `optimism` - Optimism
-- `arbitrum` - Arbitrum
+- `opt` - Optimism
+- `arb` - Arbitrum
 - `base` - Base
 - `thor` - THORChain
 - `atom` - Cosmos
@@ -202,7 +215,7 @@ vultisig address --vault keyshares/MyVault.vult --network eth
 ---
 
 ### `vultisig sign`
-Sign blockchain transactions using MPC.
+Sign blockchain transactions using MPC (requires running daemon).
 
 **Usage:**
 ```bash
@@ -226,6 +239,8 @@ echo '{"to":"bc1...","amount":"0.001"}' | vultisig sign --network btc
 # Local signing mode
 vultisig sign --network sol --mode local --payload-file sol-tx.json
 ```
+
+**Note:** This command requires a running daemon started with `vultisig run`. If no daemon is running, you'll get an error message: "No Vultisig daemon running, start with 'vultisig run' first".
 
 ---
 
@@ -329,7 +344,7 @@ When `is_encrypted = true`, vault data uses:
 
 ## 🛡️ Security Features
 - ✅ **AES-256-GCM encryption** with password validation (3 attempts)
-- ✅ **Trust Wallet Core integration** - BIP32/EdDSA derivation with 100% accuracy
+- ✅ **Trust Wallet Core integration** - Real BIP32/EdDSA derivation with 100% accuracy
 - ✅ **Unix socket permissions** (0600 - owner only) with PID validation
 - ✅ **20 blockchain networks** - ECDSA (15) and EdDSA (5) chains supported
 

@@ -14,7 +14,7 @@ export interface DerivedAddresses {
 
 export type SupportedChain = 
   | 'btc' | 'eth' | 'sol' | 'ltc' | 'doge' | 'avax' | 'matic' | 'bsc' 
-  | 'optimism' | 'arbitrum' | 'base' | 'thor' | 'atom' | 'maya' | 'ada' 
+  | 'opt' | 'arb' | 'base' | 'thor' | 'atom' | 'maya' | 'ada' 
   | 'dot' | 'xrp' | 'trx' | 'sui' | 'ton'
 
 export const CHAIN_NAMES: Record<SupportedChain, string> = {
@@ -26,8 +26,8 @@ export const CHAIN_NAMES: Record<SupportedChain, string> = {
   avax: 'Avalanche',
   matic: 'Polygon',
   bsc: 'BSC',
-  optimism: 'Optimism',
-  arbitrum: 'Arbitrum',
+  opt: 'Optimism',
+  arb: 'Arbitrum',
   base: 'Base',
   thor: 'THORChain',
   atom: 'Cosmos',
@@ -50,8 +50,8 @@ const CHAIN_MAPPING: Record<SupportedChain, Chain> = {
   avax: Chain.Avalanche,
   matic: Chain.Polygon,
   bsc: Chain.BSC,
-  optimism: Chain.Optimism,
-  arbitrum: Chain.Arbitrum,
+  opt: Chain.Optimism,
+  arb: Chain.Arbitrum,
   base: Chain.Base,
   thor: Chain.THORChain,
   atom: Chain.Cosmos,
@@ -65,8 +65,8 @@ const CHAIN_MAPPING: Record<SupportedChain, Chain> = {
 }
 
 export const ECDSA_CHAINS: SupportedChain[] = [
-  'btc', 'eth', 'ltc', 'doge', 'avax', 'matic', 'bsc', 'optimism', 
-  'arbitrum', 'base', 'thor', 'atom', 'maya', 'xrp', 'trx'
+  'btc', 'eth', 'ltc', 'doge', 'avax', 'matic', 'bsc', 'opt', 
+  'arb', 'base', 'thor', 'atom', 'maya', 'xrp', 'trx'
 ]
 export const EDDSA_CHAINS: SupportedChain[] = ['sol', 'ada', 'dot', 'sui', 'ton']
 
