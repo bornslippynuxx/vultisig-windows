@@ -2,7 +2,6 @@ import * as fs from 'fs'
 import * as crypto from 'crypto'
 import * as net from 'net'
 import { MpcServerManager, MpcServerType } from '../keysign/MpcServerManager'
-import { VultiServerClient } from '../utils/VultiServerClient'
 
 export interface SignOptions {
   network: string
@@ -23,12 +22,8 @@ export class SignCommand {
     }
     
     // Validate fast mode requirements
-    if (options.fast) {
-      if (!options.password) {
-        throw new Error('--password is mandatory when using --fast mode')
-      }
-      // Fast mode uses VultiServer directly, no need for daemon
-      return this.runFastMode(options)
+    if (options.fast && !options.password) {
+      throw new Error('--password is mandatory when using --fast mode')
     }
     
     // Infer message type from network
@@ -40,7 +35,11 @@ export class SignCommand {
       throw new Error('--mode must be "local" or "relay"')
     }
     
-    console.log('📡 Using vault already loaded in daemon...')
+    if (options.fast) {
+      console.log('⚡ Using fast mode with VultiServer via daemon...')
+    } else {
+      console.log('📡 Using vault already loaded in daemon...')
+    }
     
     // Read payload
     let payloadData: any
@@ -123,6 +122,8 @@ export class SignCommand {
           network: options.network,
           messageType: messageType,
           payload: payloadData,
+          fastMode: options.fast,
+          vultiServerPassword: options.fast ? options.password : undefined,
           policyContext: {
             sessionId,
             serverUrl: serverConfig.url,
@@ -202,72 +203,7 @@ export class SignCommand {
     }
   }
 
-  private async runFastMode(options: SignOptions): Promise<void> {
-    console.log('⚡ Using fast mode with VultiServer...')
-    
-    // Read payload
-    let payloadData: any
-    if (options.payloadFile) {
-      const payloadBuffer = await fs.promises.readFile(options.payloadFile)
-      try {
-        payloadData = JSON.parse(payloadBuffer.toString())
-      } catch {
-        // If not JSON, treat as raw data
-        payloadData = { raw: payloadBuffer.toString('hex') }
-      }
-    } else {
-      // Read from stdin
-      const payloadBuffer = await this.readFromStdin()
-      if (payloadBuffer.length === 0) {
-        throw new Error('No transaction payload provided')
-      }
-      try {
-        payloadData = JSON.parse(payloadBuffer.toString())
-      } catch {
-        // If not JSON, treat as raw data
-        payloadData = { raw: payloadBuffer.toString('hex') }
-      }
-    }
 
-    const vultiServerClient = new VultiServerClient()
-    
-    try {
-      // Auto-generate session ID if not provided
-      const sessionId = options.sessionId || this.generateSessionID()
-      
-      // Perform MPC signing ceremony with VultiServer
-      console.log('🔐 Starting MPC signing ceremony with VultiServer...')
-      console.log('⚠️  Note: This requires both local vault and VultiServer participation')
-      
-      const result = await vultiServerClient.performMpcSigning({
-        network: options.network,
-        payload: payloadData,
-        password: options.password!,
-        sessionId,
-        messageType: this.getMessageTypeForNetwork(options.network),
-        scheme: this.getSchemeForNetwork(options.network)
-      })
-      
-      console.log('\n✅ Transaction signed successfully with VultiServer!')
-      console.log('📝 Signature:', result.signature)
-      
-      if (result.signedPsbtBase64) {
-        console.log('📄 Signed PSBT:', result.signedPsbtBase64)
-      }
-      
-      if (result.finalTxHex) {
-        console.log('🔗 Final Transaction:', result.finalTxHex)
-      }
-      
-      if (result.raw) {
-        console.log('📋 Raw Transaction:', result.raw)
-      }
-      
-    } catch (error) {
-      console.error('❌ Fast mode signing failed:', error instanceof Error ? error.message : error)
-      throw error
-    }
-  }
   
   private async readFromStdin(): Promise<Buffer> {
     return new Promise((resolve, reject) => {
