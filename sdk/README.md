@@ -27,7 +27,7 @@ import { VultisigSDK } from '@vultisig/sdk'
 
 // Initialize SDK
 const sdk = new VultisigSDK({
-  serverUrl: 'https://api.vultisig.com'
+  serverUrl: 'https://api.vultisig.com/router'
 })
 
 await sdk.initialize()

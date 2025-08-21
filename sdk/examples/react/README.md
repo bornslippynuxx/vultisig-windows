@@ -45,7 +45,7 @@ This example demonstrates how to integrate the VultiSig SDK into a React applica
 import { VultisigSDK } from '@vultisig/sdk'
 
 const sdk = new VultisigSDK({
-  serverUrl: 'https://api.vultisig.com',
+  serverUrl: 'https://api.vultisig.com/router',
   theme: 'light'
 })
 

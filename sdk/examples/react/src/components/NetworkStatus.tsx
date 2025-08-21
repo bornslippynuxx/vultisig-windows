@@ -35,7 +35,7 @@ const NetworkStatus: React.FC = () => {
           console.warn(`Server responded with status: ${response.status}`)
           // If health endpoint doesn't exist, try a simple HEAD request
           try {
-            const headResponse = await fetch('https://api.vultisig.com/', {
+            const headResponse = await fetch('https://api.vultisig.com/router', {
               method: 'HEAD',
               signal: AbortSignal.timeout(3000)
             })
@@ -48,7 +48,7 @@ const NetworkStatus: React.FC = () => {
         console.error('Server health check failed:', error)
         // Fallback: try a simple connectivity test
         try {
-          await fetch('https://api.vultisig.com/', {
+          await fetch('https://api.vultisig.com/router', {
             method: 'HEAD',
             signal: AbortSignal.timeout(3000)
           })

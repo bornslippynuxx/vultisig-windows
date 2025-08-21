@@ -379,7 +379,7 @@ import { VultisigSDK, VaultCreator, BalanceDisplay } from '@vultisig/sdk'
 
 function App() {
   const [sdk] = useState(() => new VultisigSDK({ 
-    serverUrl: 'https://api.vultisig.com' 
+    serverUrl: 'https://api.vultisig.com/router' 
   }))
   const [vault, setVault] = useState<Vault | null>(null)
   

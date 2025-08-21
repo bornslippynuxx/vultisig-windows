@@ -65,7 +65,7 @@ const VaultCreator: React.FC<VaultCreatorProps> = ({ sdk, onVaultCreated }) => {
         hasPassword: !!formData.password,
         passwordsMatch: formData.password === formData.confirmPassword
       })
-      console.log('🌐 API endpoint: https://api.vultisig.com/vault/create')
+      console.log('🌐 API endpoint: https://api.vultisig.com/router/vault/create')
       
       // Create vault params without confirmPassword
       const vaultParams = {

@@ -20,7 +20,7 @@ export class VultisigSDK {
 
   constructor(config: SDKConfig = {}) {
     this.config = {
-      serverUrl: 'https://api.vultisig.com',
+      serverUrl: 'https://api.vultisig.com/router',
       theme: 'light',
       supportedChains: [],
       ...config

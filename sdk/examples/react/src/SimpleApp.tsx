@@ -3,7 +3,7 @@ import { VultisigSDK } from '@vultisig/sdk'
 
 function SimpleApp() {
   const [message, setMessage] = useState('VultiSig SDK - React Example')
-  const [sdk] = useState(() => new VultisigSDK({ serverUrl: 'https://api.vultisig.com' }))
+  const [sdk] = useState(() => new VultisigSDK({ serverUrl: 'https://api.vultisig.com/router' }))
   
   return (
     <div style={{ 

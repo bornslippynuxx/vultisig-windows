@@ -8,7 +8,7 @@ import ConsoleLogger from './components/ConsoleLogger'
 
 function App() {
   const [sdk] = useState(() => new VultisigSDK({ 
-    serverUrl: 'https://api.vultisig.com',
+    serverUrl: 'https://api.vultisig.com/router',
     theme: 'light'
   }))
   const [vault, setVault] = useState<Vault | null>(null)
