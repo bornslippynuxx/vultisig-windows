@@ -1,4 +1,4 @@
-import { UtxoChain } from '@core/chain/Chain'
+import { Chain } from '@core/chain/Chain'
 import { RequestInput } from '@core/inpage-provider/popup/view/resolvers/sendTx/interfaces'
 import { NotImplementedError } from '@lib/utils/error/NotImplementedError'
 import EventEmitter from 'events'
@@ -23,7 +23,7 @@ export class Dash extends EventEmitter {
 
   async request(data: RequestInput, callback?: Callback) {
     const processRequest = async () => {
-      const handlers = getSharedHandlers(UtxoChain.Dash)
+      const handlers = getSharedHandlers(Chain.Dash)
 
       if (data.method in handlers) {
         return handlers[data.method as keyof typeof handlers](

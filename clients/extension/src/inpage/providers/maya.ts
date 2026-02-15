@@ -1,4 +1,4 @@
-import { CosmosChain } from '@core/chain/Chain'
+import { Chain } from '@core/chain/Chain'
 import { callPopup } from '@core/inpage-provider/popup'
 import {
   DepositTransactionDetails,
@@ -27,7 +27,7 @@ export class MAYAChain extends BaseCosmosChain {
   async request(data: RequestInput, callback?: Callback): Promise<unknown> {
     const processRequest = async () => {
       const handlers = {
-        ...getSharedHandlers(CosmosChain.MayaChain),
+        ...getSharedHandlers(Chain.MayaChain),
         deposit_transaction: async ([tx]: [TransactionDetails]) => {
           const transactionDetails = {
             ...tx,
@@ -40,7 +40,7 @@ export class MAYAChain extends BaseCosmosChain {
               sendTx: {
                 keysign: {
                   transactionDetails,
-                  chain: CosmosChain.MayaChain,
+                  chain: Chain.MayaChain,
                   isDeposit: true,
                 },
               },
@@ -62,7 +62,7 @@ export class MAYAChain extends BaseCosmosChain {
                     to: tx.recipient,
                     data: tx.memo,
                   },
-                  chain: CosmosChain.MayaChain,
+                  chain: Chain.MayaChain,
                   isDeposit: true,
                 },
               },

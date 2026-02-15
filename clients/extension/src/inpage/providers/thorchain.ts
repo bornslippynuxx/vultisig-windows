@@ -1,4 +1,4 @@
-import { CosmosChain } from '@core/chain/Chain'
+import { Chain } from '@core/chain/Chain'
 import { callPopup } from '@core/inpage-provider/popup'
 import {
   DepositTransactionDetails,
@@ -28,7 +28,7 @@ export class THORChain extends BaseCosmosChain {
   async request(data: RequestInput, callback?: Callback): Promise<unknown> {
     const processRequest = async () => {
       const handlers = {
-        ...getSharedHandlers(CosmosChain.THORChain),
+        ...getSharedHandlers(Chain.THORChain),
         deposit_transaction: async ([tx]: [TransactionDetails]) => {
           const transactionDetails = {
             ...tx,
@@ -41,7 +41,7 @@ export class THORChain extends BaseCosmosChain {
               sendTx: {
                 keysign: {
                   transactionDetails,
-                  chain: CosmosChain.THORChain,
+                  chain: Chain.THORChain,
                   isDeposit: true,
                 },
               },
@@ -63,7 +63,7 @@ export class THORChain extends BaseCosmosChain {
                     to: tx.recipient,
                     data: tx.memo,
                   },
-                  chain: CosmosChain.THORChain,
+                  chain: Chain.THORChain,
                   isDeposit: true,
                 },
               },

@@ -1,7 +1,7 @@
 import VULTI_ICON_RAW_SVG from '@clients/extension/src/inpage/icon'
 import { Ethereum } from '@clients/extension/src/inpage/providers/ethereum'
 import { createProviders } from '@clients/extension/src/inpage/providers/providerFactory'
-import { UtxoChain } from '@core/chain/Chain'
+import { Chain } from '@core/chain/Chain'
 import { callBackground } from '@core/inpage-provider/background'
 import { callPopup } from '@core/inpage-provider/popup'
 import { attempt } from '@lib/utils/attempt'
@@ -56,7 +56,7 @@ async function setupContentScriptMessenger(
 ) {
   const ethereumProvider = providers.ethereum
   const phantomProvider = {
-    bitcoin: new UTXO(UtxoChain.Bitcoin, 'phantom-override'),
+    bitcoin: new UTXO(Chain.Bitcoin, 'phantom-override'),
     ethereum: ethereumProvider,
     solana: providers.solana,
   }

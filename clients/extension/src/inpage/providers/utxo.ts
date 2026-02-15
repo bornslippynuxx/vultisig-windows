@@ -1,4 +1,4 @@
-import { UtxoChain } from '@core/chain/Chain'
+import type { UtxoChain } from '@core/chain/Chain'
 import { callPopup } from '@core/inpage-provider/popup'
 import {
   BitcoinAccount,

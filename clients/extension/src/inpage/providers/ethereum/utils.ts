@@ -1,5 +1,5 @@
 import { EIP1193Error } from '@clients/extension/src/background/handlers/errorHandler'
-import { EvmChain } from '@core/chain/Chain'
+import type { EvmChain } from '@core/chain/Chain'
 import { getEvmChainByChainId } from '@core/chain/chains/evm/chainInfo'
 import { callBackground } from '@core/inpage-provider/background'
 import { BackgroundError } from '@core/inpage-provider/background/error'

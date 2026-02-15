@@ -10,7 +10,7 @@ import { registerWallet } from '@clients/extension/src/inpage/providers/solana/r
 import { THORChain } from '@clients/extension/src/inpage/providers/thorchain'
 import { UTXO } from '@clients/extension/src/inpage/providers/utxo'
 import { XDEFIKeplrProvider } from '@clients/extension/src/inpage/providers/xdefiKeplr'
-import { UtxoChain } from '@core/chain/Chain'
+import { Chain } from '@core/chain/Chain'
 
 import { TronLink } from './tronLink'
 
@@ -21,11 +21,11 @@ export const createProviders = () => {
   registerWallet(vultisigSolanaProvider)
 
   return {
-    bitcoin: new UTXO(UtxoChain.Bitcoin),
-    bitcoincash: new UTXO(UtxoChain.BitcoinCash),
-    dogecoin: new UTXO(UtxoChain.Dogecoin),
-    litecoin: new UTXO(UtxoChain.Litecoin),
-    zcash: new UTXO(UtxoChain.Zcash),
+    bitcoin: new UTXO(Chain.Bitcoin),
+    bitcoincash: new UTXO(Chain.BitcoinCash),
+    dogecoin: new UTXO(Chain.Dogecoin),
+    litecoin: new UTXO(Chain.Litecoin),
+    zcash: new UTXO(Chain.Zcash),
     cosmos: cosmosProvider,
     dash: new Dash(),
     ethereum: new Ethereum(),
