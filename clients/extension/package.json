@@ -10,15 +10,19 @@
   },
   "type": "module",
   "scripts": {
-    "build:app": "tsc -b && vite build",
-    "build:background": "tsc -b && cross-env CHUNK=background vite build",
+    "typecheck": "tsc -b",
+    "vite:app": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build",
+    "vite:background": "cross-env CHUNK=background NODE_OPTIONS=--max-old-space-size=8192 vite build",
+    "vite:content": "cross-env CHUNK=content vite build",
+    "vite:inpage": "cross-env CHUNK=inpage NODE_OPTIONS=--max-old-space-size=8192 vite build",
+    "build:app": "tsc -b && cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build",
+    "build:background": "tsc -b && cross-env CHUNK=background NODE_OPTIONS=--max-old-space-size=8192 vite build",
     "build:content": "tsc -b && cross-env CHUNK=content vite build",
-    "build:inpage": "tsc -b && cross-env CHUNK=inpage vite build",
-    "build": "npm-run-all --serial build:app build:background build:content build:inpage",
+    "build:inpage": "tsc -b && cross-env CHUNK=inpage NODE_OPTIONS=--max-old-space-size=8192 vite build",
+    "build": "tsc -b && cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build && npm-run-all --parallel vite:background vite:content vite:inpage",
     "dev": "node watch.js",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@core/chain": "workspace:^",
