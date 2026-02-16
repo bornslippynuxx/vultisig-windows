@@ -2,6 +2,8 @@ import { Vultisig } from '@vultisig/sdk'
 import { ChildrenProp } from '@lib/ui/props'
 import { createContext, useContext, useMemo } from 'react'
 
+import { SdkVaultProvider } from './SdkVaultProvider'
+
 const VultisigSdkContext = createContext<Vultisig | null>(null)
 
 export const VultisigSdkProvider = ({ children }: ChildrenProp) => {
@@ -9,7 +11,7 @@ export const VultisigSdkProvider = ({ children }: ChildrenProp) => {
 
   return (
     <VultisigSdkContext.Provider value={sdk}>
-      {children}
+      <SdkVaultProvider>{children}</SdkVaultProvider>
     </VultisigSdkContext.Provider>
   )
 }
