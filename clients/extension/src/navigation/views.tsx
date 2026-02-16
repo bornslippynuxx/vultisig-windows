@@ -5,7 +5,7 @@ import { ExpandViewGuard } from '@clients/extension/src/components/expand-view-g
 import { Prioritize } from '@clients/extension/src/components/prioritize'
 import { ReshareFastVault } from '@clients/extension/src/components/settings/reshare/ReshareFastVault'
 import { ReshareSecureVault } from '@clients/extension/src/components/settings/reshare/ReshareSecureVault'
-import { SetupFastVaultPage } from '@clients/extension/src/components/setup/SetupFastVaultPage'
+import { SdkSetupFastVaultPage } from '@clients/extension/src/sdk/vault/SdkSetupFastVaultPage'
 import { SetupSecureVaultPage } from '@clients/extension/src/components/setup/SetupSecureVaultPage'
 import { JoinKeygenPage } from '@clients/extension/src/mpc/keygen/join/JoinKeygenPage'
 import { JoinKeysignPage } from '@clients/extension/src/mpc/keysign/join/JoinKeysignPage'
@@ -53,7 +53,7 @@ const appCustomViews: Views<Exclude<AppViewId, SharedViewId>> = {
       expandView={<ExpandView />}
     />
   ),
-  setupFastVault: SetupFastVaultPage,
+  setupFastVault: SdkSetupFastVaultPage,
   setupSecureVault: SetupSecureVaultPage,
   setupVault: () => (
     <ExpandViewGuard>
