@@ -1,6 +1,7 @@
 import { NavigationProvider } from '@clients/extension/src/navigation/NavigationProvider'
 import { views } from '@clients/extension/src/navigation/views'
 import { renderExtensionPage } from '@clients/extension/src/pages/core/render'
+import { useSdkVaultSync } from '@clients/extension/src/sdk/bridge/useSdkVaultSync'
 import { isPopupView } from '@clients/extension/src/utils/functions'
 import { ExtensionCoreApp } from '@core/extension/ExtensionCoreApp'
 import { useProcessAppError } from '@core/ui/errors/hooks/useProcessAppError'
@@ -29,6 +30,11 @@ const ExtensionGlobalStyle = createGlobalStyle`
   }
 `
 
+const SdkVaultSyncEffect = () => {
+  useSdkVaultSync()
+  return null
+}
+
 const App = () => {
   const processError = useProcessAppError()
   const goBack = useNavigateBack()
@@ -40,6 +46,7 @@ const App = () => {
       goBack={goBack}
       goHome={() => navigate(initialCoreView)}
     >
+      <SdkVaultSyncEffect />
       <ActiveView views={views} />
     </ExtensionCoreApp>
   )
