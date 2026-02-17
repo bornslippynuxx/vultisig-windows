@@ -5,16 +5,25 @@ import type { Vultisig, VaultBase } from '@vultisig/sdk'
 
 import { createVultContent } from './createVultContent'
 
+type CacheEntry = {
+  vault: VaultBase
+  hasPassword: boolean
+}
+
 /**
  * Bridges extension Vault objects to SDK VaultBase instances.
  *
  * The extension stores vaults as raw Vault objects (with keyShares).
  * The SDK expects .vult file content (protobuf → base64).
  * This bridge converts between the two, caching hydrated vaults by ID.
+ *
+ * Cache tracks whether the vault was hydrated with a password.
+ * Password-less hydration supports read-only operations (balance, address).
+ * Signing flows re-hydrate with password when needed.
  */
 export class VaultBridge {
   private readonly sdk: Vultisig
-  private readonly cache = new Map<string, VaultBase>()
+  private readonly cache = new Map<string, CacheEntry>()
 
   constructor(sdk: Vultisig) {
     this.sdk = sdk
@@ -23,7 +32,7 @@ export class VaultBridge {
   /**
    * Hydrate an extension vault into an SDK VaultBase instance.
    *
-   * 1. Check cache for already-hydrated vault
+   * 1. Check cache — return if cached with sufficient credentials
    * 2. If passcode is set, decrypt keyShares first
    * 3. Generate .vult content from the vault
    * 4. Import into SDK via sdk.importVault()
@@ -38,10 +47,11 @@ export class VaultBridge {
     options?: { passcode?: string; vaultPassword?: string }
   ): Promise<VaultBase> {
     const vaultId = getVaultId(vault)
+    const requestsPassword = !!(options?.passcode || options?.vaultPassword)
 
     const cached = this.cache.get(vaultId)
-    if (cached) {
-      return cached
+    if (cached && (!requestsPassword || cached.hasPassword)) {
+      return cached.vault
     }
 
     // Decrypt keyShares if passcode is active
@@ -64,7 +74,7 @@ export class VaultBridge {
       options?.vaultPassword
     )
 
-    this.cache.set(vaultId, sdkVault)
+    this.cache.set(vaultId, { vault: sdkVault, hasPassword: requestsPassword })
     return sdkVault
   }
 
@@ -72,7 +82,7 @@ export class VaultBridge {
    * Get a cached vault instance without re-hydrating.
    */
   getCached(vaultId: string): VaultBase | undefined {
-    return this.cache.get(vaultId)
+    return this.cache.get(vaultId)?.vault
   }
 
   /**

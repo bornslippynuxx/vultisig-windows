@@ -20,11 +20,12 @@ import { ResponsivenessProvider } from '@core/ui/providers/ResponsivenessProvide
 import { SettingsPage } from '@core/ui/settings'
 import { ImportVaultPage } from '@core/ui/vault/import/components/ImportVaultPage'
 import { ImportSeedphrasePage } from '@core/ui/vault/import/seedphrase/ImportSeedphrasePage'
-import { VaultPage } from '@core/ui/vault/page/components/VaultPage'
 import { Views } from '@lib/ui/navigation/Views'
 
+import { SdkVaultPage } from '../sdk/pages/SdkVaultPage'
+
 const ExtensionVaultPage = () => {
-  return <VaultPage primaryControls={<DappsButton />} />
+  return <SdkVaultPage primaryControls={<DappsButton />} />
 }
 
 const appCustomViews: Views<Exclude<AppViewId, SharedViewId>> = {
