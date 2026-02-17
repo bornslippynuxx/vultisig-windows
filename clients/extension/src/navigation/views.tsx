@@ -13,11 +13,14 @@ import { AppViewId } from '@clients/extension/src/navigation/AppView'
 import { ConnectedDappsPage } from '@clients/extension/src/pages/connected-dapps'
 import { SetupVaultPageController } from '@clients/extension/src/pages/setup-vault/SetupVaultPageController'
 import { SdkStartKeysignView } from '@clients/extension/src/sdk/signing/SdkStartKeysignView'
+import { getVaultId } from '@core/mpc/vault/Vault'
 import { SharedViewId, sharedViews } from '@core/ui/navigation/sharedViews'
 import { OnboardingPage } from '@core/ui/onboarding/components/OnboardingPage'
 import { IncompleteOnboardingOnly } from '@core/ui/onboarding/IncompleteOnboardingOnly'
 import { ResponsivenessProvider } from '@core/ui/providers/ResponsivenessProvider'
 import { SettingsPage } from '@core/ui/settings'
+import { useCurrentVaultId } from '@core/ui/storage/currentVaultId'
+import { useVaults } from '@core/ui/storage/vaults'
 import { ImportVaultPage } from '@core/ui/vault/import/components/ImportVaultPage'
 import { ImportSeedphrasePage } from '@core/ui/vault/import/seedphrase/ImportSeedphrasePage'
 import { Views } from '@lib/ui/navigation/Views'
@@ -25,6 +28,9 @@ import { Views } from '@lib/ui/navigation/Views'
 import { SdkVaultPage } from '../sdk/pages/SdkVaultPage'
 
 const ExtensionVaultPage = () => {
+  const vaults = useVaults()
+  const currentVaultId = useCurrentVaultId()
+  if (!vaults.some(v => getVaultId(v) === currentVaultId)) return null
   return <SdkVaultPage primaryControls={<DappsButton />} />
 }
 
