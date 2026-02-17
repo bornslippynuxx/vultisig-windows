@@ -1,7 +1,7 @@
-import type { Balance, Chain } from '@vultisig/sdk'
 import { VStack } from '@lib/ui/layout/Stack'
 import { Spinner } from '@lib/ui/loaders/Spinner'
 import { Text } from '@lib/ui/text'
+import type { Balance, Chain } from '@vultisig/sdk'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 

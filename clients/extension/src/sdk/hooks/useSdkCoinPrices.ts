@@ -7,10 +7,7 @@ import { Vultisig } from '@vultisig/sdk'
  * @param ids - CoinGecko price provider IDs to look up
  * @param fiatCurrency - Fiat currency code (default: 'usd')
  */
-export const useSdkCoinPrices = (
-  ids: string[],
-  fiatCurrency?: string
-) => {
+export const useSdkCoinPrices = (ids: string[], fiatCurrency?: string) => {
   return useQuery({
     queryKey: ['sdk', 'coinPrices', ids, fiatCurrency],
     queryFn: () => Vultisig.getCoinPrices({ ids, fiatCurrency }),

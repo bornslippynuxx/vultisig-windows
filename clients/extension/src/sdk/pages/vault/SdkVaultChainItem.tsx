@@ -50,12 +50,7 @@ export const SdkVaultChainItem = ({
                 justifyContent="space-between"
                 alignItems="flex-end"
               >
-                <Text
-                  centerVertically
-                  color="contrast"
-                  weight="550"
-                  size={14}
-                >
+                <Text centerVertically color="contrast" weight="550" size={14}>
                   <BalanceVisibilityAware>
                     {formatFiatAmount(fiatValue)}
                   </BalanceVisibilityAware>

@@ -1,4 +1,4 @@
-import { Vultisig, type Chain, type FeeCoinInfo } from '@vultisig/sdk'
+import { type Chain, type FeeCoinInfo, Vultisig } from '@vultisig/sdk'
 
 /**
  * Returns the native fee coin info for a chain (synchronous — no query needed).

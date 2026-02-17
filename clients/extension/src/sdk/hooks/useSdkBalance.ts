@@ -13,13 +13,17 @@ export const useSdkBalance = (chain: Chain, tokenId?: string) => {
   const vault = useSdkVaultRequired()
   const queryClient = useQueryClient()
 
-  useSdkEventCallback<VaultEvents, 'balanceUpdated'>(vault, 'balanceUpdated', event => {
-    if (event.chain === chain && event.tokenId === tokenId) {
-      queryClient.invalidateQueries({
-        queryKey: ['sdk', 'balance', vault.id, chain, tokenId],
-      })
+  useSdkEventCallback<VaultEvents, 'balanceUpdated'>(
+    vault,
+    'balanceUpdated',
+    event => {
+      if (event.chain === chain && event.tokenId === tokenId) {
+        queryClient.invalidateQueries({
+          queryKey: ['sdk', 'balance', vault.id, chain, tokenId],
+        })
+      }
     }
-  })
+  )
 
   return useQuery({
     queryKey: ['sdk', 'balance', vault.id, chain, tokenId],

@@ -16,11 +16,15 @@ export const useSdkSwapQuote = (params: SwapQuoteParams | null) => {
   const vault = useSdkVaultRequired()
   const queryClient = useQueryClient()
 
-  useSdkEventCallback<VaultEvents, 'swapQuoteReceived'>(vault, 'swapQuoteReceived', () => {
-    queryClient.invalidateQueries({
-      queryKey: ['sdk', 'swapQuote', vault.id],
-    })
-  })
+  useSdkEventCallback<VaultEvents, 'swapQuoteReceived'>(
+    vault,
+    'swapQuoteReceived',
+    () => {
+      queryClient.invalidateQueries({
+        queryKey: ['sdk', 'swapQuote', vault.id],
+      })
+    }
+  )
 
   return useQuery({
     queryKey: ['sdk', 'swapQuote', vault.id, params],

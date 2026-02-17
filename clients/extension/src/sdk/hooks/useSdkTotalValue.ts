@@ -15,11 +15,15 @@ export const useSdkTotalValue = (fiatCurrency?: FiatCurrency) => {
   const vault = useSdkVaultRequired()
   const queryClient = useQueryClient()
 
-  useSdkEventCallback<VaultEvents, 'totalValueUpdated'>(vault, 'totalValueUpdated', () => {
-    queryClient.invalidateQueries({
-      queryKey: ['sdk', 'totalValue', vault.id],
-    })
-  })
+  useSdkEventCallback<VaultEvents, 'totalValueUpdated'>(
+    vault,
+    'totalValueUpdated',
+    () => {
+      queryClient.invalidateQueries({
+        queryKey: ['sdk', 'totalValue', vault.id],
+      })
+    }
+  )
 
   return useQuery({
     queryKey: ['sdk', 'totalValue', vault.id, fiatCurrency],
