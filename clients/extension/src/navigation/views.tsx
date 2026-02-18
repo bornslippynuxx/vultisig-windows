@@ -25,13 +25,13 @@ import { ImportVaultPage } from '@core/ui/vault/import/components/ImportVaultPag
 import { ImportSeedphrasePage } from '@core/ui/vault/import/seedphrase/ImportSeedphrasePage'
 import { Views } from '@lib/ui/navigation/Views'
 
-import { SdkVaultPage } from '../sdk/pages/SdkVaultPage'
+import { VaultPage } from '../sdk/pages/vault/page/components/VaultPage'
 
 const ExtensionVaultPage = () => {
   const vaults = useVaults()
   const currentVaultId = useCurrentVaultId()
   if (!vaults.some(v => getVaultId(v) === currentVaultId)) return null
-  return <SdkVaultPage primaryControls={<DappsButton />} />
+  return <VaultPage primaryControls={<DappsButton />} />
 }
 
 const appCustomViews: Views<Exclude<AppViewId, SharedViewId>> = {
