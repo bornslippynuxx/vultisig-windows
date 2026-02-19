@@ -1,4 +1,3 @@
-import { SetupFastVaultPage as OriginalSetupFastVaultPage } from '@clients/extension/src/components/setup/SetupFastVaultPage'
 import { VaultSecurityTypeProvider } from '@core/ui/mpc/keygen/create/state/vaultSecurityType'
 import { KeygenOperationProvider } from '@core/ui/mpc/keygen/state/currentKeygenOperationType'
 import { useCoreViewState } from '@core/ui/navigation/hooks/useCoreViewState'
@@ -8,22 +7,21 @@ import { SdkCreateFastVaultFlow } from './SdkCreateFastVaultFlow'
 /**
  * SDK-backed fast vault setup page.
  *
- * For new vault creation: uses SDK's createFastVault() with email verification.
- * For key imports (seedphrase): falls back to the original MPC-based flow
- * since the SDK's seedphrase import requires additional integration.
+ * Handles both new vault creation and seedphrase import via SDK:
+ * - New vault: sdk.createFastVault() with email verification
+ * - Seedphrase: sdk.createFastVaultFromSeedphrase() with email verification
  */
 export const SdkSetupFastVaultPage = () => {
   const [state] = useCoreViewState<'setupFastVault'>()
 
-  // Fall back to original flow for seedphrase imports
-  if (state?.keyImportInput) {
-    return <OriginalSetupFastVaultPage />
-  }
-
   return (
     <VaultSecurityTypeProvider value="fast">
-      <KeygenOperationProvider value={{ create: true }}>
-        <SdkCreateFastVaultFlow />
+      <KeygenOperationProvider
+        value={
+          state?.keyImportInput ? { keyimport: true } : { create: true }
+        }
+      >
+        <SdkCreateFastVaultFlow keyImportInput={state?.keyImportInput} />
       </KeygenOperationProvider>
     </VaultSecurityTypeProvider>
   )

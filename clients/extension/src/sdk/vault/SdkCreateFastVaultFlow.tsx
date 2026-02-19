@@ -1,5 +1,7 @@
 import { VaultSetupForm } from '@core/ui/mpc/keygen/create/VaultSetupForm'
+import { CreateVaultSuccessScreen } from '@core/ui/mpc/keygen/create/CreateVaultSuccessScreen'
 import type { FastVaultCreationInput } from '@core/ui/mpc/keygen/create/VaultCreationInput'
+import type { KeyImportInput } from '@core/ui/mpc/keygen/keyimport/state/keyImportInput'
 import { useCore } from '@core/ui/state/core'
 import { useCoreNavigate } from '@core/ui/navigation/hooks/useCoreNavigate'
 import { FlowPendingPageContent } from '@lib/ui/flow/FlowPendingPageContent'
@@ -25,10 +27,13 @@ import { useCreateVaultMutation } from '@core/ui/vault/mutations/useCreateVaultM
 import { useVaults } from '@core/ui/storage/vaults'
 import { getLastItemOrder } from '@lib/utils/order/getLastItemOrder'
 
-type FlowStep = 'form' | 'creating' | 'verifying' | 'saving' | 'success'
+type FlowStep = 'form' | 'creating' | 'verifying' | 'success'
 
 const EMAIL_CODE_LENGTH = 4
-const SUCCESS_REDIRECT_DELAY = 2000
+
+type Props = {
+  keyImportInput?: KeyImportInput
+}
 
 /**
  * SDK-backed fast vault creation flow.
@@ -37,14 +42,18 @@ const SUCCESS_REDIRECT_DELAY = 2000
  * and server registration separately, delegates to the SDK which handles
  * the full vault creation lifecycle.
  *
+ * Supports both new vault creation and seedphrase import:
+ * - New vault: sdk.createFastVault()
+ * - Seedphrase: sdk.createFastVaultFromSeedphrase()
+ *
  * Steps:
  * 1. VaultSetupForm - collect name, email, password
- * 2. sdk.createFastVault() - MPC keygen with VultiServer
+ * 2. SDK vault creation (with or without seedphrase)
  * 3. Email verification - user enters 4-digit code
- * 4. sdk.verifyVault() - persist vault
- * 5. Sync to extension storage
+ * 4. sdk.verifyVault() - persist vault + sync to extension storage
+ * 5. Success screen with Rive animation
  */
-export const SdkCreateFastVaultFlow = () => {
+export const SdkCreateFastVaultFlow = ({ keyImportInput }: Props) => {
   const { t } = useTranslation()
   const { goBack } = useCore()
   const navigate = useCoreNavigate()
@@ -68,12 +77,25 @@ export const SdkCreateFastVaultFlow = () => {
       setError(null)
 
       try {
-        const id = await sdk.createFastVault({
-          name: input.name,
-          password: input.password,
-          email: input.email,
-          onProgress: setProgress,
-        })
+        let id: string
+        if (keyImportInput) {
+          id = await sdk.createFastVaultFromSeedphrase({
+            mnemonic: keyImportInput.mnemonic,
+            chains: keyImportInput.chains,
+            usePhantomSolanaPath: keyImportInput.usePhantomSolanaPath,
+            name: input.name,
+            password: input.password,
+            email: input.email,
+            onProgress: setProgress,
+          })
+        } else {
+          id = await sdk.createFastVault({
+            name: input.name,
+            password: input.password,
+            email: input.email,
+            onProgress: setProgress,
+          })
+        }
         setVaultId(id)
         setStep('verifying')
       } catch (err) {
@@ -81,7 +103,7 @@ export const SdkCreateFastVaultFlow = () => {
         setStep('creating') // stay on creating step to show error
       }
     },
-    [sdk]
+    [sdk, keyImportInput]
   )
 
   // Step 4: Verify and save
@@ -93,7 +115,6 @@ export const SdkCreateFastVaultFlow = () => {
       const sdkVault: VaultBase = await sdk.verifyVault(vaultId, code)
 
       // Sync to extension storage
-      setStep('saving')
       const order = getLastItemOrder(vaults.map(v => v.order))
       const extensionVault = sdkVaultToExtensionVault(sdkVault, order)
       await createVaultInStorage(extensionVault)
@@ -104,16 +125,6 @@ export const SdkCreateFastVaultFlow = () => {
       setStep('success')
     },
   })
-
-  // Step 5: Auto-navigate on success
-  useEffect(() => {
-    if (step === 'success') {
-      const timer = setTimeout(() => {
-        navigate({ id: 'vault' })
-      }, SUCCESS_REDIRECT_DELAY)
-      return () => clearTimeout(timer)
-    }
-  }, [step, navigate])
 
   // Email verification auto-submit
   const [emailCode, setEmailCode] = useState<string | null>('')
@@ -131,10 +142,10 @@ export const SdkCreateFastVaultFlow = () => {
 
   const inputState = useMemo<MultiCharacterInputProps['validation']>(() => {
     if (verifyMutation.isSuccess) return 'valid'
-    if (verifyMutation.isPending || step === 'saving') return 'loading'
+    if (verifyMutation.isPending) return 'loading'
     if (verifyMutation.error) return 'invalid'
     return 'idle'
-  }, [verifyMutation.isSuccess, verifyMutation.isPending, verifyMutation.error, step])
+  }, [verifyMutation.isSuccess, verifyMutation.isPending, verifyMutation.error])
 
   // Render based on current step
   switch (step) {
@@ -212,26 +223,11 @@ export const SdkCreateFastVaultFlow = () => {
         </VStack>
       )
 
-    case 'saving':
-      return (
-        <>
-          <PageHeader title={t('saving_vault')} hasBorder />
-          <FlowPendingPageContent title={t('saving_vault')} />
-        </>
-      )
-
     case 'success':
       return (
-        <>
-          <PageHeader title={t('success')} hasBorder />
-          <PageContent alignItems="center">
-            <VStack gap={16} alignItems="center" justifyContent="center" style={{ height: 400 }}>
-              <Text size={22} weight="500">
-                {t('vaultCreated')}
-              </Text>
-            </VStack>
-          </PageContent>
-        </>
+        <CreateVaultSuccessScreen
+          onFinish={() => navigate({ id: 'vault' })}
+        />
       )
   }
 }

@@ -3,10 +3,10 @@ import { ExtensionDeveloperOptions } from '@clients/extension/src/components/dev
 import { ExpandView } from '@clients/extension/src/components/expand-view'
 import { ExpandViewGuard } from '@clients/extension/src/components/expand-view-guard'
 import { Prioritize } from '@clients/extension/src/components/prioritize'
-import { ReshareFastVault } from '@clients/extension/src/components/settings/reshare/ReshareFastVault'
-import { ReshareSecureVault } from '@clients/extension/src/components/settings/reshare/ReshareSecureVault'
 import { SdkSetupFastVaultPage } from '@clients/extension/src/sdk/vault/SdkSetupFastVaultPage'
-import { SetupSecureVaultPage } from '@clients/extension/src/components/setup/SetupSecureVaultPage'
+import { SdkSetupSecureVaultPage } from '@clients/extension/src/sdk/keygen/SdkSetupSecureVaultPage'
+import { SdkReshareFastVault } from '@clients/extension/src/sdk/reshare/SdkReshareFastVault'
+import { SdkReshareSecureVault } from '@clients/extension/src/sdk/reshare/SdkReshareSecureVault'
 import { JoinKeygenPage } from '@clients/extension/src/mpc/keygen/join/JoinKeygenPage'
 import { JoinKeysignPage } from '@clients/extension/src/mpc/keysign/join/JoinKeysignPage'
 import { AppViewId } from '@clients/extension/src/navigation/AppView'
@@ -51,8 +51,8 @@ const appCustomViews: Views<Exclude<AppViewId, SharedViewId>> = {
       <OnboardingPage />
     </IncompleteOnboardingOnly>
   ),
-  reshareVaultFast: ReshareFastVault,
-  reshareVaultSecure: ReshareSecureVault,
+  reshareVaultFast: SdkReshareFastVault,
+  reshareVaultSecure: SdkReshareSecureVault,
   settings: () => (
     <SettingsPage
       insiderOptions={<ExtensionDeveloperOptions />}
@@ -61,7 +61,7 @@ const appCustomViews: Views<Exclude<AppViewId, SharedViewId>> = {
     />
   ),
   setupFastVault: SdkSetupFastVaultPage,
-  setupSecureVault: SetupSecureVaultPage,
+  setupSecureVault: SdkSetupSecureVaultPage,
   setupVault: () => (
     <ExpandViewGuard>
       <ResponsivenessProvider>

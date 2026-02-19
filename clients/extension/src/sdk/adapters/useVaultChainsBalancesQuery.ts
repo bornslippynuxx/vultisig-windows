@@ -25,8 +25,8 @@ export const useVaultChainsBalancesQuery = (): EagerQuery<
   const groupedCoins = useCurrentVaultCoinsByChain()
 
   const balancesQuery = useQuery({
-    queryKey: ['sdk', 'balances', vault?.id, undefined, true],
-    queryFn: () => vault!.balances(undefined, true),
+    queryKey: ['sdk', 'balancesWithPrices', vault?.id],
+    queryFn: () => vault!.balancesWithPrices(undefined, true),
     enabled: !!vault,
   })
 
@@ -38,17 +38,10 @@ export const useVaultChainsBalancesQuery = (): EagerQuery<
         const key = coinKeyToString(coin)
         const sdkBalance = balancesQuery.data?.[key]
 
-        const amount = sdkBalance ? BigInt(sdkBalance.amount || '0') : BigInt(0)
-        const price = (() => {
-          if (!sdkBalance?.fiatValue) return 0
-          const formatted = parseFloat(sdkBalance.formattedAmount)
-          return formatted > 0 ? sdkBalance.fiatValue / formatted : 0
-        })()
-
         return {
           ...coin,
-          amount,
-          price,
+          amount: sdkBalance ? BigInt(sdkBalance.amount || '0') : BigInt(0),
+          price: sdkBalance?.value ?? 0,
         }
       })
     })
