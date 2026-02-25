@@ -31,6 +31,7 @@ import { SdkManageVaultChainCoinsPage } from '../sdk/pages/vault/chain/coin/SdkM
 import { SdkImportVaultPage } from '../sdk/pages/vault/import/SdkImportVaultPage'
 import { SdkSignCustomMessagePage } from '../sdk/pages/vault/keysign/SdkSignCustomMessagePage'
 import { SdkSendPage } from '../sdk/pages/vault/send/SdkSendPage'
+import { SdkSwapPage } from '../sdk/pages/vault/swap/SdkSwapPage'
 import { SdkDeleteVaultPage } from '../sdk/pages/vault/settings/SdkDeleteVaultPage'
 import { SdkVaultRenamePage } from '../sdk/pages/vault/settings/SdkVaultRenamePage'
 
@@ -89,4 +90,5 @@ export const views: Views<AppViewId> = {
   manageVaultChainCoins: SdkManageVaultChainCoinsPage, // SDK-backed token management
   signCustomMessage: SdkSignCustomMessagePage, // SDK-backed custom message signing
   send: SdkSendPage, // SDK-backed send flow (payload construction)
+  swap: SdkSwapPage, // SDK-backed swap flow (payload construction)
 }
