@@ -21,11 +21,17 @@ import { ResponsivenessProvider } from '@core/ui/providers/ResponsivenessProvide
 import { SettingsPage } from '@core/ui/settings'
 import { useCurrentVaultId } from '@core/ui/storage/currentVaultId'
 import { useVaults } from '@core/ui/storage/vaults'
-import { ImportVaultPage } from '@core/ui/vault/import/components/ImportVaultPage'
 import { ImportSeedphrasePage } from '@core/ui/vault/import/seedphrase/ImportSeedphrasePage'
 import { Views } from '@lib/ui/navigation/Views'
 
 import { VaultPage } from '../sdk/pages/vault/page/components/VaultPage'
+import { SdkVaultBackupFlow } from '../sdk/pages/vault/backup/SdkVaultBackupFlow'
+import { SdkManageVaultChainsPage } from '../sdk/pages/vault/chain/SdkManageVaultChainsPage'
+import { SdkManageVaultChainCoinsPage } from '../sdk/pages/vault/chain/coin/SdkManageVaultChainCoinsPage'
+import { SdkImportVaultPage } from '../sdk/pages/vault/import/SdkImportVaultPage'
+import { SdkSignCustomMessagePage } from '../sdk/pages/vault/keysign/SdkSignCustomMessagePage'
+import { SdkDeleteVaultPage } from '../sdk/pages/vault/settings/SdkDeleteVaultPage'
+import { SdkVaultRenamePage } from '../sdk/pages/vault/settings/SdkVaultRenamePage'
 
 const ExtensionVaultPage = () => {
   const vaults = useVaults()
@@ -39,7 +45,7 @@ const appCustomViews: Views<Exclude<AppViewId, SharedViewId>> = {
   importSeedphrase: ImportSeedphrasePage,
   importVault: () => (
     <ExpandViewGuard>
-      <ImportVaultPage />
+      <SdkImportVaultPage />
     </ExpandViewGuard>
   ),
   joinKeygen: JoinKeygenPage,
@@ -75,4 +81,10 @@ export const views: Views<AppViewId> = {
   ...sharedViews,
   ...appCustomViews,
   vault: ExtensionVaultPage, // Override the shared vault view
+  renameVault: SdkVaultRenamePage, // SDK-backed vault rename
+  deleteVault: SdkDeleteVaultPage, // SDK-backed vault delete
+  vaultBackup: SdkVaultBackupFlow, // SDK-backed vault backup
+  manageVaultChains: SdkManageVaultChainsPage, // SDK-backed chain management
+  manageVaultChainCoins: SdkManageVaultChainCoinsPage, // SDK-backed token management
+  signCustomMessage: SdkSignCustomMessagePage, // SDK-backed custom message signing
 }
