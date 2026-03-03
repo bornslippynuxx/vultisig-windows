@@ -49,6 +49,11 @@ function resolvePolyfillShims(): Plugin {
 
 export default async () => {
   const chunk = process.env.CHUNK
+  const isDev = !!process.env.VITE_DEV_RELOAD
+
+  const devBuildOptions = isDev
+    ? { minify: false as const, reportCompressedSize: false }
+    : {}
 
   if (chunk) {
     let format: 'cjs' | 'es' | 'iife' | 'umd' | undefined = undefined
@@ -83,6 +88,7 @@ export default async () => {
         copyPublicDir: false,
         emptyOutDir: false,
         manifest: false,
+        ...devBuildOptions,
         rollupOptions: {
           input: {
             [chunk]: path.resolve(__dirname, `src/${chunk}/index.ts`),
@@ -110,6 +116,7 @@ export default async () => {
       build: {
         emptyOutDir: false,
         manifest: false,
+        ...devBuildOptions,
         rollupOptions: {
           input: {
             index: path.resolve(__dirname, 'index.html'),

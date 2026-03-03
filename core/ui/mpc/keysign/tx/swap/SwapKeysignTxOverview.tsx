@@ -28,9 +28,10 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
+import { useTxStatusQuery } from '../../../../chain/tx/status/useTxStatusQuery'
+import { TxActualFeeDisplay } from '../components/TxActualFeeDisplay'
 import { TxFeeRow } from '../components/TxFeeRow'
-import { KeysignFeeAmount } from '../FeeAmount'
-import { TransactionSuccessAnimation } from '../TransactionSuccessAnimation'
+import { TxStatusTracker } from '../TxStatusTracker'
 import { TrackTxPrompt } from './TrackTxPrompt'
 
 export const SwapKeysignTxOverview = ({
@@ -65,6 +66,13 @@ export const SwapKeysignTxOverview = ({
     }
   )
 
+  const mainTxHash = getLastItem(txHashes)
+  const txStatusQuery = useTxStatusQuery({
+    chain: blockExplorerChain,
+    hash: mainTxHash,
+  })
+  const receipt = txStatusQuery.data?.receipt
+
   const trackTransaction = (tx: string) =>
     openUrl(
       getSwapTrackingUrl({
@@ -75,8 +83,11 @@ export const SwapKeysignTxOverview = ({
     )
 
   return (
-    <>
-      <TransactionSuccessAnimation />
+    <VStack gap={36}>
+      <TxStatusTracker
+        chain={blockExplorerChain}
+        hash={getLastItem(txHashes)}
+      />
       <VStack alignItems="center" gap={8}>
         <VStack gap={8}>
           <Text centerHorizontally color="shy" size={10} height="large">
@@ -150,9 +161,14 @@ export const SwapKeysignTxOverview = ({
               </AddressWrapper>
             </HStack>
           )}
-          <TxFeeRow label={t('network_fee')}>
-            <KeysignFeeAmount keysignPayload={value} />
-          </TxFeeRow>
+          {receipt && (
+            <TxFeeRow label={t('network_fee')}>
+              <TxActualFeeDisplay
+                chain={blockExplorerChain}
+                receipt={receipt}
+              />
+            </TxFeeRow>
+          )}
         </SwapInfoWrapper>
         <HStack gap={8} fullWidth>
           <Button
@@ -164,7 +180,7 @@ export const SwapKeysignTxOverview = ({
           <Button onClick={goHome}>{t('done')}</Button>
         </HStack>
       </VStack>
-    </>
+    </VStack>
   )
 }
 

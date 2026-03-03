@@ -2,7 +2,6 @@ import { hasServer } from '@core/mpc/devices/localPartyId'
 import { KeygenOperation } from '@core/mpc/keygen/KeygenOperation'
 import { FlowErrorPageContent } from '@core/ui/flow/FlowErrorPageContent'
 import { PageHeaderBackButton } from '@core/ui/flow/PageHeaderBackButton'
-import { CreateVaultSuccessScreen } from '@core/ui/mpc/keygen/create/CreateVaultSuccessScreen'
 import { useKeygenMutation } from '@core/ui/mpc/keygen/mutations/useKeygenMutation'
 import { KeygenPendingState } from '@core/ui/mpc/keygen/progress/KeygenPendingState'
 import { useKeygenOperation } from '@core/ui/mpc/keygen/state/currentKeygenOperationType'
@@ -57,6 +56,8 @@ export const KeygenFlow = ({
     return 'reshare' in keygenOperation && keygenOperation.reshare === 'plugin'
   }, [keygenOperation])
 
+  const isCreateOperation = 'create' in keygenOperation
+
   return (
     <MatchQuery
       value={keygenMutationState}
@@ -102,16 +103,9 @@ export const KeygenFlow = ({
             <MatchRecordUnion
               value={keygenOperation}
               handlers={{
-                create: () => (
-                  <StepTransition
-                    from={({ onFinish }) => (
-                      <CreateVaultSuccessScreen onFinish={onFinish} />
-                    )}
-                    to={renderEnding}
-                  />
-                ),
+                create: renderEnding,
                 reshare: renderEnding,
-                keyimport: renderEnding, // TODO: Handle key import specific ending if needed
+                keyimport: renderEnding,
               }}
             />
           </CurrentVaultProvider>
@@ -119,26 +113,26 @@ export const KeygenFlow = ({
       }}
       error={error => (
         <>
-          <PageHeader
-            title={title}
-            hasBorder
-            primaryControls={<PageHeaderBackButton />}
-          />
+          {!isCreateOperation && (
+            <PageHeader
+              title={title}
+              hasBorder
+              primaryControls={<PageHeaderBackButton />}
+            />
+          )}
           <FlowErrorPageContent title={t('keygen_failed')} error={error} />
         </>
       )}
       pending={() => (
         <>
-          {!isPluginReshare ? (
-            <>
-              <PageHeader
-                title={title}
-                hasBorder
-                primaryControls={<PageHeaderBackButton />}
-              />
-              <KeygenPendingState value={step} />
-            </>
-          ) : null}
+          {!isPluginReshare && !isCreateOperation && (
+            <PageHeader
+              title={title}
+              hasBorder
+              primaryControls={<PageHeaderBackButton />}
+            />
+          )}
+          {!isPluginReshare && <KeygenPendingState value={step} />}
         </>
       )}
     />

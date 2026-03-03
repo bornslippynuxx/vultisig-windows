@@ -12,11 +12,15 @@ import { ChainAction } from '@core/ui/vault/deposit/ChainAction'
 import { VaultSecurityType } from '@core/ui/vault/VaultSecurityType'
 
 export type CoreView =
+  | { id: 'agent' }
+  | {
+      id: 'agentChat'
+      state: { conversationId?: string; initialMessage?: string }
+    }
   | { id: 'addCustomToken'; state: { chain: ChainWithTokenMetadataDiscovery } }
   | { id: 'address'; state: { address: string } }
   | { id: 'addressBook' }
   | { id: 'faq' }
-  | { id: 'airdropRegister' }
   | {
       id: 'createAddressBookItem'
       state?: { address?: string; chain?: Chain }
@@ -61,7 +65,6 @@ export type CoreView =
   | { id: 'manageVaultChainCoins'; state: { chain: Chain } }
   | { id: 'newVault' }
   | { id: 'importSeedphrase' }
-  | { id: 'renameVault' }
   | { id: 'reshareVault' }
   | { id: 'reshareVaultFast' }
   | { id: 'reshareVaultSecure' }
@@ -72,6 +75,7 @@ export type CoreView =
         address?: string
         amount?: bigint
         memo?: string
+        skipToVerify?: boolean
       }
     }
   | { id: 'settings' }
@@ -85,7 +89,15 @@ export type CoreView =
       state: { type?: VaultSecurityType; keyImportInput?: KeyImportInput }
     }
   | { id: 'signCustomMessage' }
-  | { id: 'swap'; state: { fromCoin?: CoinKey; toCoin?: CoinKey } }
+  | {
+      id: 'swap'
+      state: {
+        fromCoin?: CoinKey
+        toCoin?: CoinKey
+        fromAmount?: bigint
+        autoSubmit?: boolean
+      }
+    }
   | { id: 'updateAddressBookItem'; state: { id: string } }
   | { id: 'updateVaultFolder'; state: { id: string } }
   | { id: 'uploadQr'; state: { title?: string } }
@@ -105,6 +117,7 @@ export type CoreView =
   | { id: 'vaultChainDetail'; state: { chain: Chain } }
   | { id: 'vaultFolder'; state: { id: string } }
   | { id: 'vaults' }
+  | { id: 'renameVault' }
   | { id: 'vaultSettings' }
   | { id: 'manageVaults' }
   | { id: 'managePasscodeEncryption' }

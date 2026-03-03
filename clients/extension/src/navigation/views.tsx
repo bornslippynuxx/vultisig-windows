@@ -22,7 +22,11 @@ import { SettingsPage } from '@core/ui/settings'
 import { useCurrentVaultId } from '@core/ui/storage/currentVaultId'
 import { useVaults } from '@core/ui/storage/vaults'
 import { ImportSeedphrasePage } from '@core/ui/vault/import/seedphrase/ImportSeedphrasePage'
+import { useNavigate } from '@lib/ui/navigation/hooks/useNavigate'
 import { Views } from '@lib/ui/navigation/Views'
+import { useEffect } from 'react'
+
+import { ManageSidePanel } from '../components/side-panel/ManageSidePanel'
 
 import { VaultPage } from '../sdk/pages/vault/page/components/VaultPage'
 import { SdkVaultBackupFlow } from '../sdk/pages/vault/backup/SdkVaultBackupFlow'
@@ -38,7 +42,17 @@ import { SdkVaultRenamePage } from '../sdk/pages/vault/settings/SdkVaultRenamePa
 const ExtensionVaultPage = () => {
   const vaults = useVaults()
   const currentVaultId = useCurrentVaultId()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (vaults.length === 0) {
+      navigate({ id: 'newVault' }, { replace: true })
+    }
+  }, [vaults.length, navigate])
+
+  if (vaults.length === 0) return null
   if (!vaults.some(v => getVaultId(v) === currentVaultId)) return null
+
   return <VaultPage primaryControls={<DappsButton />} />
 }
 
@@ -66,6 +80,7 @@ const appCustomViews: Views<Exclude<AppViewId, SharedViewId>> = {
       insiderOptions={<ExtensionDeveloperOptions />}
       prioritize={<Prioritize />}
       expandView={<ExpandView />}
+      sidePanel={<ManageSidePanel />}
     />
   ),
   setupFastVault: SdkSetupFastVaultPage,

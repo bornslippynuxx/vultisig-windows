@@ -3,5 +3,7 @@ export const featureFlags = {
   nftTab: false,
   importSeedphrase: true,
   mayaChain: false,
-  defiLpsTab: false,
+  defiLpsTab: true,
+  agent: false,
+  mldsaKeygen: false,
 }
