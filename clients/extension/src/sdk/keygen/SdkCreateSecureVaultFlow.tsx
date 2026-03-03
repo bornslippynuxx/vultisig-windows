@@ -1,5 +1,5 @@
-import { VaultSetupForm } from '@core/ui/mpc/keygen/create/VaultSetupForm'
-import { CreateVaultSuccessScreen } from '@core/ui/mpc/keygen/create/CreateVaultSuccessScreen'
+import { SecureVaultSetupFlow } from '@core/ui/mpc/keygen/create/secure/SecureVaultSetupFlow'
+import { VaultCreatedSuccessScreen } from '@core/ui/vault/backup/fast/VaultCreatedSuccessScreen'
 import type { SecureVaultCreationInput } from '@core/ui/mpc/keygen/create/VaultCreationInput'
 import type { KeyImportInput } from '@core/ui/mpc/keygen/keyimport/state/keyImportInput'
 import { useCore } from '@core/ui/state/core'
@@ -113,10 +113,9 @@ export const SdkCreateSecureVaultFlow = ({
   switch (step) {
     case 'form':
       return (
-        <VaultSetupForm
-          vaultSecurityType="secure"
+        <SecureVaultSetupFlow
           onBack={goBack}
-          onSubmit={handleFormSubmit}
+          onFinish={handleFormSubmit}
         />
       )
 
@@ -150,9 +149,7 @@ export const SdkCreateSecureVaultFlow = ({
 
     case 'success':
       return (
-        <CreateVaultSuccessScreen
-          onFinish={() => navigate({ id: 'vault' })}
-        />
+        <VaultCreatedSuccessScreen />
       )
   }
 }
