@@ -2,6 +2,8 @@ import { NavigationProvider } from '@clients/extension/src/navigation/Navigation
 import { views } from '@clients/extension/src/navigation/views'
 import { renderExtensionPage } from '@clients/extension/src/pages/core/render'
 import { useSdkVaultSync } from '@clients/extension/src/sdk/bridge/useSdkVaultSync'
+import { useNotificationRegistration } from '@clients/extension/src/sdk/notifications/useNotificationRegistration'
+import { useWebSocketNotifications } from '@clients/extension/src/sdk/notifications/useWebSocketNotifications'
 import { isPopupView } from '@clients/extension/src/utils/functions'
 import { ExtensionCoreApp } from '@core/extension/ExtensionCoreApp'
 import { getVaultId } from '@core/mpc/vault/Vault'
@@ -35,6 +37,8 @@ const ExtensionGlobalStyle = createGlobalStyle`
 
 const SdkVaultSyncEffect = () => {
   useSdkVaultSync()
+  useNotificationRegistration()
+  useWebSocketNotifications()
   return null
 }
 

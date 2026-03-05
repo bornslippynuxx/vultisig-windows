@@ -1,4 +1,5 @@
 import type { KeysignSignature } from '@core/mpc/keysign/KeysignSignature'
+import { getVaultId } from '@core/mpc/vault/Vault'
 import {
   KeysignAction,
   KeysignActionProvider as BaseKeysignActionProvider,
@@ -17,6 +18,7 @@ import {
 } from 'react'
 
 import { useSdkVault } from '../SdkVaultProvider'
+import { useVultisigSdk } from '../VultisigSdkProvider'
 import { useVaultBridge } from '../bridge/useVaultBridge'
 
 import { toKeysignSignature } from './convertSignature'
@@ -53,6 +55,7 @@ export const useSecureSigningState = () => useContext(SecureSigningStateContext)
 export const SdkSecureKeysignFlow = () => {
   const [{ keysignPayload }] = useCoreViewState<'keysign'>()
   const vault = useCurrentVault()
+  const sdk = useVultisigSdk()
   const sdkVault = useSdkVault()
   const bridge = useVaultBridge()
   const sdkVaultRef = useRef<VaultBase | null>(sdkVault)
@@ -84,6 +87,18 @@ export const SdkSecureKeysignFlow = () => {
           qrPayload,
           phase: 'waiting_for_devices',
         }))
+
+        // Push notification to other vault members so they can auto-join
+        sdk.notifications
+          .notifyVaultMembers({
+            vaultId: getVaultId(vault),
+            vaultName: vault.name,
+            localPartyId: vault.localPartyId,
+            qrCodeData: qrPayload,
+          })
+          .catch(() => {
+            // Non-fatal — QR code is displayed as fallback
+          })
       })
       const unsubDevice = v.on(
         'deviceJoined',
