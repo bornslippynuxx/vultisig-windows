@@ -21,7 +21,8 @@
     "knip:fix": "knip --fix --allow-remove-files",
     "check": "concurrently --kill-others-on-fail \"yarn typecheck\" \"yarn lint:fix\" && yarn knip && (yarn translate || true)",
     "translate": "yarn workspace @core/ui translate",
-    "update": "yarn set version latest && yarn dlx npm-check-updates@latest -u --workspaces --root && yarn install"
+    "update": "yarn set version latest && yarn dlx npm-check-updates@latest -u --workspaces --root && yarn install",
+    "sync": "git fetch origin && git stash && git checkout main && git merge --ff-only origin/main && git checkout - && git merge main && git stash pop 2>/dev/null; true"
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.2",
