@@ -1165,6 +1165,8 @@ export const en = {
   you_are_sending: "You're sending",
   you_are_staking: "You're staking",
   you_are_unstaking: "You're unstaking",
+  you_are_minting: "You're minting",
+  you_are_redeeming: "You're redeeming",
   yourVaultShares: 'Your vault has {{shares}} Vault Shares',
   vaultSetupOverview: {
     title: 'Your vault setup',
@@ -1277,4 +1279,7 @@ export const en = {
   agent_tx_type_swap: 'Swap',
   agent_tx_type_transfer: 'Transfer',
   agent_tx_view: 'View',
+  agent_analyzing: 'Analyzing...',
+  agent_analyzed_for: 'Analyzed for {{duration}}s',
+  agent_analyzed: 'Analyzed',
 }
