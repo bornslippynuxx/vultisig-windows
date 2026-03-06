@@ -21,7 +21,7 @@ import { ResponsivenessProvider } from '@core/ui/providers/ResponsivenessProvide
 import { SettingsPage } from '@core/ui/settings'
 import { useCurrentVaultId } from '@core/ui/storage/currentVaultId'
 import { useVaults } from '@core/ui/storage/vaults'
-import { ImportSeedphrasePage } from '@core/ui/vault/import/seedphrase/ImportSeedphrasePage'
+import { SdkImportSeedphrasePage } from '../sdk/pages/vault/import/seedphrase/SdkImportSeedphrasePage'
 import { useNavigate } from '@lib/ui/navigation/hooks/useNavigate'
 import { Views } from '@lib/ui/navigation/Views'
 import { useEffect } from 'react'
@@ -38,6 +38,9 @@ import { SdkSendPage } from '../sdk/pages/vault/send/SdkSendPage'
 import { SdkSwapPage } from '../sdk/pages/vault/swap/SdkSwapPage'
 import { SdkDeleteVaultPage } from '../sdk/pages/vault/settings/SdkDeleteVaultPage'
 import { SdkVaultRenamePage } from '../sdk/pages/vault/settings/SdkVaultRenamePage'
+import { SdkAddressBookPage } from '../sdk/pages/addressBook/SdkAddressBookPage'
+import { SdkCreateAddressBookItemPage } from '../sdk/pages/addressBook/SdkCreateAddressBookItemPage'
+import { SdkUpdateAddressBookItemPage } from '../sdk/pages/addressBook/SdkUpdateAddressBookItemPage'
 
 const ExtensionVaultPage = () => {
   const vaults = useVaults()
@@ -58,7 +61,7 @@ const ExtensionVaultPage = () => {
 
 const appCustomViews: Views<Exclude<AppViewId, SharedViewId>> = {
   connectedDapps: ConnectedDappsPage,
-  importSeedphrase: ImportSeedphrasePage,
+  importSeedphrase: SdkImportSeedphrasePage,
   importVault: () => (
     <ExpandViewGuard>
       <SdkImportVaultPage />
@@ -106,4 +109,7 @@ export const views: Views<AppViewId> = {
   signCustomMessage: SdkSignCustomMessagePage, // SDK-backed custom message signing
   send: SdkSendPage, // SDK-backed send flow (payload construction)
   swap: SdkSwapPage, // SDK-backed swap flow (payload construction)
+  addressBook: SdkAddressBookPage, // SDK-backed address book list
+  createAddressBookItem: SdkCreateAddressBookItemPage, // SDK-backed address book create
+  updateAddressBookItem: SdkUpdateAddressBookItemPage, // SDK-backed address book update
 }
