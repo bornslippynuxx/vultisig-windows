@@ -7,6 +7,8 @@ import { SdkSetupFastVaultPage } from '@clients/extension/src/sdk/vault/SdkSetup
 import { SdkSetupSecureVaultPage } from '@clients/extension/src/sdk/keygen/SdkSetupSecureVaultPage'
 import { SdkReshareFastVault } from '@clients/extension/src/sdk/reshare/SdkReshareFastVault'
 import { SdkReshareSecureVault } from '@clients/extension/src/sdk/reshare/SdkReshareSecureVault'
+import { SingleKeygenFastVault } from '@clients/extension/src/components/settings/singleKeygen/SingleKeygenFastVault'
+import { SingleKeygenSecureVault } from '@clients/extension/src/components/settings/singleKeygen/SingleKeygenSecureVault'
 import { JoinKeygenPage } from '@clients/extension/src/mpc/keygen/join/JoinKeygenPage'
 import { JoinKeysignPage } from '@clients/extension/src/mpc/keysign/join/JoinKeysignPage'
 import { AppViewId } from '@clients/extension/src/navigation/AppView'
@@ -78,6 +80,8 @@ const appCustomViews: Views<Exclude<AppViewId, SharedViewId>> = {
   ),
   reshareVaultFast: SdkReshareFastVault,
   reshareVaultSecure: SdkReshareSecureVault,
+  singleKeygenFast: SingleKeygenFastVault,
+  singleKeygenSecure: SingleKeygenSecureVault,
   settings: () => (
     <SettingsPage
       insiderOptions={<ExtensionDeveloperOptions />}

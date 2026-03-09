@@ -1,3 +1,4 @@
+import { Cardano } from '@clients/extension/src/inpage/providers/cardano'
 import { Cosmos } from '@clients/extension/src/inpage/providers/cosmos'
 import { Dash } from '@clients/extension/src/inpage/providers/dash'
 import { Ethereum } from '@clients/extension/src/inpage/providers/ethereum'
@@ -7,10 +8,11 @@ import { Polkadot } from '@clients/extension/src/inpage/providers/polkadot'
 import { Ripple } from '@clients/extension/src/inpage/providers/ripple'
 import { Solana } from '@clients/extension/src/inpage/providers/solana'
 import { registerWallet } from '@clients/extension/src/inpage/providers/solana/register'
+import { Sui } from '@clients/extension/src/inpage/providers/sui'
 import { THORChain } from '@clients/extension/src/inpage/providers/thorchain'
 import { UTXO } from '@clients/extension/src/inpage/providers/utxo'
 import { XDEFIKeplrProvider } from '@clients/extension/src/inpage/providers/xdefiKeplr'
-import { Chain } from '@core/chain/Chain'
+import { UtxoChain } from '@core/chain/Chain'
 
 import { TronLink } from './tronLink'
 
@@ -21,11 +23,12 @@ export const createProviders = () => {
   registerWallet(vultisigSolanaProvider)
 
   return {
-    bitcoin: new UTXO(Chain.Bitcoin),
-    bitcoincash: new UTXO(Chain.BitcoinCash),
-    dogecoin: new UTXO(Chain.Dogecoin),
-    litecoin: new UTXO(Chain.Litecoin),
-    zcash: new UTXO(Chain.Zcash),
+    bitcoin: new UTXO(UtxoChain.Bitcoin),
+    cardano: Cardano.getInstance(),
+    bitcoincash: new UTXO(UtxoChain.BitcoinCash),
+    dogecoin: new UTXO(UtxoChain.Dogecoin),
+    litecoin: new UTXO(UtxoChain.Litecoin),
+    zcash: new UTXO(UtxoChain.Zcash),
     cosmos: cosmosProvider,
     dash: new Dash(),
     ethereum: new Ethereum(),
@@ -35,6 +38,7 @@ export const createProviders = () => {
     polkadot: Polkadot.getInstance(),
     ripple: Ripple.getInstance(),
     solana: vultisigSolanaProvider,
+    sui: Sui.getInstance(),
     thorchain: THORChain.getInstance(),
     tron: new TronLink(),
   }
