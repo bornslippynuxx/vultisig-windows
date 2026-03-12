@@ -1,5 +1,6 @@
 import { NavigationProvider } from '@clients/extension/src/navigation/NavigationProvider'
 import { views } from '@clients/extension/src/navigation/views'
+import { AutoRegisterPushNotifications } from '@clients/extension/src/notifications/AutoRegisterPushNotifications'
 import { renderExtensionPage } from '@clients/extension/src/pages/core/render'
 import { useSdkVaultSync } from '@clients/extension/src/sdk/bridge/useSdkVaultSync'
 import { useNotificationRegistration } from '@clients/extension/src/sdk/notifications/useNotificationRegistration'
@@ -62,6 +63,7 @@ const App = () => {
     >
       <SdkVaultSyncGuard />
       <ActiveView views={views} />
+      <AutoRegisterPushNotifications />
     </ExtensionCoreApp>
   )
 }

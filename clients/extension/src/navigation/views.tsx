@@ -24,10 +24,13 @@ import { SettingsPage } from '@core/ui/settings'
 import { useCurrentVaultId } from '@core/ui/storage/currentVaultId'
 import { useVaults } from '@core/ui/storage/vaults'
 import { SdkImportSeedphrasePage } from '../sdk/pages/vault/import/seedphrase/SdkImportSeedphrasePage'
+import { VaultSettingsPage } from '@core/ui/vault/settings'
 import { useNavigate } from '@lib/ui/navigation/hooks/useNavigate'
 import { Views } from '@lib/ui/navigation/Views'
 import { useEffect } from 'react'
 
+import { ManagePushNotifications } from '../components/notifications/ManagePushNotifications'
+import { RegisterPushNotificationsButton } from '../components/notifications/RegisterPushNotificationsButton'
 import { ManageSidePanel } from '../components/side-panel/ManageSidePanel'
 
 import { VaultPage } from '../sdk/pages/vault/page/components/VaultPage'
@@ -88,6 +91,7 @@ const appCustomViews: Views<Exclude<AppViewId, SharedViewId>> = {
       prioritize={<Prioritize />}
       expandView={<ExpandView />}
       sidePanel={<ManageSidePanel />}
+      pushNotifications={<ManagePushNotifications />}
     />
   ),
   setupFastVault: SdkSetupFastVaultPage,
@@ -104,16 +108,19 @@ const appCustomViews: Views<Exclude<AppViewId, SharedViewId>> = {
 export const views: Views<AppViewId> = {
   ...sharedViews,
   ...appCustomViews,
-  vault: ExtensionVaultPage, // Override the shared vault view
-  renameVault: SdkVaultRenamePage, // SDK-backed vault rename
-  deleteVault: SdkDeleteVaultPage, // SDK-backed vault delete
-  vaultBackup: SdkVaultBackupFlow, // SDK-backed vault backup
-  manageVaultChains: SdkManageVaultChainsPage, // SDK-backed chain management
-  manageVaultChainCoins: SdkManageVaultChainCoinsPage, // SDK-backed token management
-  signCustomMessage: SdkSignCustomMessagePage, // SDK-backed custom message signing
-  send: SdkSendPage, // SDK-backed send flow (payload construction)
-  swap: SdkSwapPage, // SDK-backed swap flow (payload construction)
-  addressBook: SdkAddressBookPage, // SDK-backed address book list
-  createAddressBookItem: SdkCreateAddressBookItemPage, // SDK-backed address book create
-  updateAddressBookItem: SdkUpdateAddressBookItemPage, // SDK-backed address book update
+  vault: ExtensionVaultPage,
+  renameVault: SdkVaultRenamePage,
+  deleteVault: SdkDeleteVaultPage,
+  vaultBackup: SdkVaultBackupFlow,
+  manageVaultChains: SdkManageVaultChainsPage,
+  manageVaultChainCoins: SdkManageVaultChainCoinsPage,
+  signCustomMessage: SdkSignCustomMessagePage,
+  send: SdkSendPage,
+  swap: SdkSwapPage,
+  addressBook: SdkAddressBookPage,
+  createAddressBookItem: SdkCreateAddressBookItemPage,
+  updateAddressBookItem: SdkUpdateAddressBookItemPage,
+  vaultSettings: () => (
+    <VaultSettingsPage extraItems={<RegisterPushNotificationsButton />} />
+  ),
 }
