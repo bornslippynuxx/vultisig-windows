@@ -13,9 +13,11 @@ type CacheEntry = {
 /**
  * Bridges extension Vault objects to SDK VaultBase instances.
  *
- * The extension stores vaults as raw Vault objects (with keyShares).
- * The SDK expects .vult file content (protobuf → base64).
- * This bridge converts between the two, caching hydrated vaults by ID.
+ * Uses SDK storage as the source of truth for vault data (including keyShares).
+ * When a vault is imported via SdkImportVaultPage, the full .vult content
+ * (with keyShares) is stored in SDK's ChromeExtensionStorage. This bridge
+ * loads from SDK storage first, falling back to re-creating .vult content
+ * from the extension vault only if the vault isn't found in SDK storage.
  *
  * Cache tracks whether the vault was hydrated with a password.
  * Password-less hydration supports read-only operations (balance, address).
@@ -33,10 +35,9 @@ export class VaultBridge {
    * Hydrate an extension vault into an SDK VaultBase instance.
    *
    * 1. Check cache — return if cached with sufficient credentials
-   * 2. If passcode is set, decrypt keyShares first
-   * 3. Generate .vult content from the vault
-   * 4. Import into SDK via sdk.importVault()
-   * 5. Cache and return the VaultBase instance
+   * 2. Try loading from SDK storage (source of truth, has full keyShares)
+   * 3. If not in SDK storage, fall back to creating .vult from extension vault
+   * 4. Cache and return the VaultBase instance
    *
    * @param vault - Extension vault object
    * @param options.passcode - Passcode to decrypt keyShares (if encrypted)
@@ -54,7 +55,26 @@ export class VaultBridge {
       return cached.vault
     }
 
-    // Decrypt keyShares if passcode is active
+    // Try to load from SDK storage first (has full keyShares from original import)
+    const existingVault = await this.sdk.getVaultById(vaultId)
+
+    if (existingVault) {
+      if (options?.vaultPassword) {
+        // Re-import with password using stored .vult content (has real keyShares)
+        const storedVultContent = existingVault.data.vultFileContent
+        const sdkVault = await this.sdk.importVault(
+          storedVultContent,
+          options.vaultPassword
+        )
+        this.cache.set(vaultId, { vault: sdkVault, hasPassword: true })
+        return sdkVault
+      }
+
+      this.cache.set(vaultId, { vault: existingVault, hasPassword: false })
+      return existingVault
+    }
+
+    // Fallback: create .vult from extension vault (only works if keyShares present)
     let resolvedVault = vault
     if (options?.passcode) {
       const decrypted = decryptVaultAllKeyShares({
@@ -65,10 +85,8 @@ export class VaultBridge {
       resolvedVault = { ...vault, ...decrypted }
     }
 
-    // Convert to .vult content
     const vultContent = createVultContent(resolvedVault, options?.vaultPassword)
 
-    // Import into SDK (saves to SDK storage + creates VaultBase)
     const sdkVault = await this.sdk.importVault(
       vultContent,
       options?.vaultPassword

@@ -50,6 +50,7 @@ test.describe('Send Flow', () => {
   })
 
   test('send native token on chain 1 - broadcasts and confirms', async ({ context, extensionId }) => {
+    test.setTimeout(180_000) // Allow 3 min for full signing + confirmation flow
     test.skip(!ENABLE_TX_TESTS, 'TX signing tests disabled')
 
     const chain = selectedChains[0]
@@ -160,6 +161,7 @@ test.describe('Send Flow', () => {
   })
 
   test('send native token on chain 2 - broadcasts and confirms', async ({ context, extensionId }) => {
+    test.setTimeout(180_000) // Allow 3 min for full signing + confirmation flow
     test.skip(!ENABLE_TX_TESTS, 'TX signing tests disabled')
 
     const chain = selectedChains[1]

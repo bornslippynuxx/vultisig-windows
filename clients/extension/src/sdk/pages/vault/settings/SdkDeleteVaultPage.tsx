@@ -154,13 +154,14 @@ export const SdkDeleteVaultPage = () => {
             </VItem>
           </HStack>
         </VStack>
-        <VStack gap={8}>
+        <VStack gap={8} data-testid="delete-vault-terms">
           {terms.map((term, index) => (
             <Checkbox
               key={index}
               onChange={() => toggleCheckbox(index)}
               label={t(term)}
               value={termsAccepted[index]}
+              data-testid={`delete-confirm-${index + 1}`}
             />
           ))}
         </VStack>
@@ -176,6 +177,7 @@ export const SdkDeleteVaultPage = () => {
           loading={deleteMutation.isPending}
           onClick={handleConfirm}
           status="danger"
+          data-testid="delete-vault-button"
         >
           {t('delete')}
         </Button>

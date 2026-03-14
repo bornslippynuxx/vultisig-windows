@@ -17,7 +17,7 @@ test.describe('Event Listener Registration', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -39,7 +39,7 @@ test.describe('Event Listener Registration', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -63,7 +63,7 @@ test.describe('Event Listener Registration', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -87,7 +87,7 @@ test.describe('Event Listener Registration', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -125,7 +125,7 @@ test.describe('Event Types Support', () => {
       const page = await context.newPage()
       await page.goto(testDappUrl)
 
-      await page.waitForFunction(() => !!window.ethereum, null, {
+      await page.waitForFunction(() => !!window.ethereum, {
         timeout: PROVIDER_TIMEOUT,
       })
 
@@ -150,7 +150,7 @@ test.describe('Event Emission', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -174,7 +174,7 @@ test.describe('Event Emission', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -201,7 +201,7 @@ test.describe('Event Emission', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -224,7 +224,7 @@ test.describe('Event Emission', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -247,7 +247,7 @@ test.describe('Event Emission', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -274,7 +274,7 @@ test.describe('Event Emission', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -300,7 +300,7 @@ test.describe('Solana Event System', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 

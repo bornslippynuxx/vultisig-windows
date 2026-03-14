@@ -93,7 +93,7 @@ test.describe('DApp Provider', () => {
 
     await page.goto(dappUrl)
     await page.waitForLoadState('domcontentloaded')
-    await page.waitForFunction(() => !!window.ethereum, null, { timeout: 10000 })
+    await page.waitForFunction(() => !!window.ethereum, { timeout: 10000 })
 
     // Click connect button on DApp
     const connectButton = page.locator('[data-testid="connect-wallet"]')
@@ -138,7 +138,7 @@ test.describe('DApp Provider', () => {
 
     await page.goto(dappUrl)
     await page.waitForLoadState('domcontentloaded')
-    await page.waitForFunction(() => !!window.ethereum, null, { timeout: 10000 })
+    await page.waitForFunction(() => !!window.ethereum, { timeout: 10000 })
 
     // First connect (if needed)
     const connectButton = page.locator('[data-testid="connect-wallet"]')
@@ -207,7 +207,7 @@ test.describe('DApp Provider', () => {
 
     await page.goto(dappUrl)
     await page.waitForLoadState('domcontentloaded')
-    await page.waitForFunction(() => !!window.ethereum, null, { timeout: 10000 })
+    await page.waitForFunction(() => !!window.ethereum, { timeout: 10000 })
 
     // Connect first
     const connectButton = page.locator('[data-testid="connect-wallet"]')
@@ -273,7 +273,7 @@ test.describe('DApp Provider', () => {
 
     await page.goto(dappUrl)
     await page.waitForLoadState('domcontentloaded')
-    await page.waitForFunction(() => !!window.ethereum, null, { timeout: 10000 })
+    await page.waitForFunction(() => !!window.ethereum, { timeout: 10000 })
 
     // Click connect
     const connectButton = page.locator('[data-testid="connect-wallet"]')

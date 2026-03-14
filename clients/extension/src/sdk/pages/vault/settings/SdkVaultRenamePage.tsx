@@ -122,7 +122,7 @@ export const SdkVaultRenamePage = () => {
       />
       <PageContent gap={12} flexGrow scrollable>
         <ActionInsideInteractiveElement
-          render={() => <TextInput {...register('name')} />}
+          render={() => <TextInput {...register('name')} data-testid="rename-vault-input" />}
           action={
             <IconButton
               style={{
@@ -139,7 +139,7 @@ export const SdkVaultRenamePage = () => {
           }}
         />
         {typeof errors.name?.message === 'string' && (
-          <Text color="danger" size={12}>
+          <Text color="danger" size={12} data-testid="rename-validation-error">
             {errors.name.message}
           </Text>
         )}
@@ -154,6 +154,7 @@ export const SdkVaultRenamePage = () => {
           disabled={!isValid || !isDirty}
           loading={renameMutation.isPending}
           type="submit"
+          data-testid="rename-vault-save"
         >
           {t('save')}
         </Button>

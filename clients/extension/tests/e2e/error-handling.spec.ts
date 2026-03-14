@@ -41,7 +41,7 @@ test.describe('EIP-1193 Error Codes', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -58,7 +58,7 @@ test.describe('EIP-1193 Error Codes', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -74,7 +74,7 @@ test.describe('EIP-1193 Error Codes', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -90,7 +90,7 @@ test.describe('EIP-1193 Error Codes', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -108,7 +108,7 @@ test.describe('Provider Disconnected State', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -123,7 +123,7 @@ test.describe('Provider Disconnected State', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -138,7 +138,7 @@ test.describe('Provider Disconnected State', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -153,7 +153,7 @@ test.describe('Provider Disconnected State', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -170,7 +170,7 @@ test.describe('Concurrent Requests', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -200,7 +200,7 @@ test.describe('Concurrent Requests', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -224,7 +224,7 @@ test.describe('Concurrent Requests', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -269,7 +269,7 @@ test.describe('Invalid Input Handling', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -293,7 +293,7 @@ test.describe('Invalid Input Handling', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 

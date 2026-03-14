@@ -20,7 +20,7 @@ test.describe('VultiConnect Router', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -63,7 +63,7 @@ test.describe('VultiConnect Router', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -86,7 +86,7 @@ test.describe('VultiConnect Router', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -113,7 +113,7 @@ test.describe('VultiConnect Router', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -140,7 +140,7 @@ test.describe('VultiConnect Router', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -167,7 +167,7 @@ test.describe('VultiConnect Router', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -198,7 +198,7 @@ test.describe('VultiConnect Router', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -227,7 +227,7 @@ test.describe('VultiConnect Router', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -253,7 +253,7 @@ test.describe('Provider Routing Behavior', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 

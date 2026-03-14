@@ -18,7 +18,7 @@ async function callMethod(
   method: string,
   params: unknown[] = []
 ) {
-  await page.waitForFunction(() => !!window.ethereum, null, {
+  await page.waitForFunction(() => !!window.ethereum, {
     timeout: PROVIDER_TIMEOUT,
   })
 
@@ -601,7 +601,7 @@ test.describe('Ethereum JSON-RPC Methods', () => {
       const page = await context.newPage()
       await page.goto(testDappUrl)
 
-      await page.waitForFunction(() => !!window.ethereum, null, {
+      await page.waitForFunction(() => !!window.ethereum, {
         timeout: PROVIDER_TIMEOUT,
       })
 
@@ -618,7 +618,7 @@ test.describe('Ethereum JSON-RPC Methods', () => {
       const page = await context.newPage()
       await page.goto(testDappUrl)
 
-      await page.waitForFunction(() => !!window.ethereum, null, {
+      await page.waitForFunction(() => !!window.ethereum, {
         timeout: PROVIDER_TIMEOUT,
       })
 

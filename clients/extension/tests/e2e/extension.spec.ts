@@ -41,7 +41,7 @@ test.describe('Provider Injection', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: 10_000,
     })
 
@@ -69,7 +69,7 @@ test.describe('Provider Injection', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: 10_000,
     })
 
@@ -86,7 +86,7 @@ test.describe('Provider Injection', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: 10_000,
     })
 
@@ -103,7 +103,7 @@ test.describe('Provider Injection', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: 10_000,
     })
 
@@ -133,7 +133,7 @@ test.describe('Ethereum Connect Flow', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: 10_000,
     })
 
@@ -166,7 +166,7 @@ test.describe('Ethereum Connect Flow', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: 10_000,
     })
 
@@ -190,7 +190,7 @@ test.describe('Chain Switching', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: 10_000,
     })
 

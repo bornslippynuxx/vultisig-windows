@@ -55,9 +55,9 @@ export const SdkManageVaultChainsPage = () => {
         hasBorder
       />
       <PageContent gap={24} flexGrow scrollable>
-        <SearchInput value={search} onChange={setSearch} />
+        <SearchInput value={search} onChange={setSearch} data-testid="chain-search-input" />
         {sortedNativeCoins.length > 0 ? (
-          <ItemGrid>
+          <ItemGrid data-testid="chain-grid">
             {sortedNativeCoins.map((coin, index) => (
               <SdkChainItem key={index} value={coin} />
             ))}

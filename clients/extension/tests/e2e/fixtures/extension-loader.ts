@@ -30,7 +30,7 @@ export async function waitForProvider(
   page: import('@playwright/test').Page,
   timeout = 10_000
 ) {
-  await page.waitForFunction(() => !!window.ethereum, null, { timeout })
+  await page.waitForFunction(() => !!window.ethereum, { timeout })
   return page
 }
 
@@ -41,7 +41,7 @@ export async function waitForVultisig(
   page: import('@playwright/test').Page,
   timeout = 10_000
 ) {
-  await page.waitForFunction(() => !!window.vultisig, null, { timeout })
+  await page.waitForFunction(() => !!window.vultisig, { timeout })
   return page
 }
 
@@ -50,7 +50,7 @@ export const test = base.extend<{
   extensionId: string
   testDappUrl: string
 }>({
-  context: async (_fixtures, use) => {
+  context: async ({}, use) => {
     const context = await chromium.launchPersistentContext('', {
       headless: false,
       args: [
@@ -80,7 +80,7 @@ export const test = base.extend<{
   },
 
   // Serve the test DApp over HTTP so the content script can inject
-  testDappUrl: async (_fixtures, use) => {
+  testDappUrl: async ({}, use) => {
     const html = fs.readFileSync(testDappPath, 'utf-8')
 
     const server = http.createServer((req, res) => {

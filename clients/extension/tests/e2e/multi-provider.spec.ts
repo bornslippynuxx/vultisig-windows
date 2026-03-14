@@ -23,7 +23,7 @@ test.describe('Core Provider Objects', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -45,7 +45,7 @@ test.describe('Core Provider Objects', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -129,7 +129,7 @@ test.describe('Ethereum Provider', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -177,7 +177,7 @@ test.describe('UTXO Providers', () => {
       const page = await context.newPage()
       await page.goto(testDappUrl)
 
-      await page.waitForFunction(() => !!window.vultisig, null, {
+      await page.waitForFunction(() => !!window.vultisig, {
         timeout: PROVIDER_TIMEOUT,
       })
 
@@ -195,7 +195,7 @@ test.describe('UTXO Providers', () => {
       const page = await context.newPage()
       await page.goto(testDappUrl)
 
-      await page.waitForFunction(() => !!window.vultisig, null, {
+      await page.waitForFunction(() => !!window.vultisig, {
         timeout: PROVIDER_TIMEOUT,
       })
 
@@ -217,7 +217,7 @@ test.describe('Solana Provider', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -263,7 +263,7 @@ test.describe('Solana Provider', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -294,7 +294,7 @@ test.describe('Cosmos & Keplr Provider', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -318,7 +318,7 @@ test.describe('Cosmos & Keplr Provider', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -357,7 +357,7 @@ test.describe('THORChain Provider', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -383,7 +383,7 @@ test.describe('MayaChain Provider', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -409,7 +409,7 @@ test.describe('Dash Provider', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -433,7 +433,7 @@ test.describe('Ripple Provider', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -455,7 +455,7 @@ test.describe('Sui Provider', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -477,7 +477,7 @@ test.describe('Cardano Provider', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -499,7 +499,7 @@ test.describe('Polkadot Provider', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -525,7 +525,7 @@ test.describe('Tron Provider', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -557,7 +557,7 @@ test.describe('Prioritized Provider Injection (conditional)', () => {
     await page.goto(testDappUrl)
 
     // Wait a bit for all injections to complete
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -587,7 +587,7 @@ test.describe('Prioritized Provider Injection (conditional)', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -615,7 +615,7 @@ test.describe('Prioritized Provider Injection (conditional)', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -641,7 +641,7 @@ test.describe('Prioritized Provider Injection (conditional)', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -669,7 +669,7 @@ test.describe('Prioritized Provider Injection (conditional)', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -705,7 +705,7 @@ test.describe('Prioritized Provider Injection (conditional)', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -724,7 +724,7 @@ test.describe('Singleton Behavior', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.vultisig, null, {
+    await page.waitForFunction(() => !!window.vultisig, {
       timeout: PROVIDER_TIMEOUT,
     })
 
@@ -743,7 +743,7 @@ test.describe('Singleton Behavior', () => {
     const page = await context.newPage()
     await page.goto(testDappUrl)
 
-    await page.waitForFunction(() => !!window.ethereum, null, {
+    await page.waitForFunction(() => !!window.ethereum, {
       timeout: PROVIDER_TIMEOUT,
     })
 

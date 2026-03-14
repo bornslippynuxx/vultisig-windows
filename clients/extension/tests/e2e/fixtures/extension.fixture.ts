@@ -41,7 +41,7 @@ export async function waitForProvider(
   page: Page,
   timeout = 10_000
 ): Promise<Page> {
-  await page.waitForFunction(() => !!window.ethereum, null, { timeout })
+  await page.waitForFunction(() => !!window.ethereum, { timeout })
   return page
 }
 
@@ -52,7 +52,7 @@ export async function waitForVultisig(
   page: Page,
   timeout = 10_000
 ): Promise<Page> {
-  await page.waitForFunction(() => !!window.vultisig, null, { timeout })
+  await page.waitForFunction(() => !!window.vultisig, { timeout })
   return page
 }
 

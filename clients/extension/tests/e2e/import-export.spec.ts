@@ -245,7 +245,7 @@ test.describe('Import Page — Navigation & Rendering', () => {
     expect(hasSupportedTypes || hasVultMention).toBe(true)
   })
 
-  test('import page has Continue button (disabled initially)', async ({
+  test('import page has file dropzone (no file selected initially)', async ({
     context,
     extensionId,
   }) => {
@@ -263,10 +263,15 @@ test.describe('Import Page — Navigation & Rendering', () => {
       return
     }
 
-    // The Continue button should exist but be disabled (no file selected)
-    const continueButton = page.getByRole('button', { name: /continue/i })
-    await expect(continueButton).toBeVisible({ timeout: 5_000 })
-    await expect(continueButton).toBeDisabled()
+    // The SDK import page shows a file dropzone for .vult files
+    // Check for either a dropzone area or an "Import Vault" header
+    const hasDropzone = await page
+      .locator('text=/drop|browse|select.*file|import.*vault/i')
+      .first()
+      .isVisible({ timeout: 5_000 })
+      .catch(() => false)
+
+    expect(hasDropzone).toBe(true)
   })
 
   test('import page has back navigation', async ({

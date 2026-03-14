@@ -195,10 +195,10 @@ test.describe('Multiple Tabs', () => {
     await page2.goto(`${testDappUrl}/other-page`)
 
     // Both tabs should get the provider injected
-    await page1.waitForFunction(() => !!window.ethereum, null, {
+    await page1.waitForFunction(() => !!window.ethereum, {
       timeout: 10_000,
     })
-    await page2.waitForFunction(() => !!window.ethereum, null, {
+    await page2.waitForFunction(() => !!window.ethereum, {
       timeout: 10_000,
     })
 
@@ -226,10 +226,10 @@ test.describe('Multiple Tabs', () => {
     await page1.goto(testDappUrl)
     await page2.goto(`${testDappUrl}/page2`)
 
-    await page1.waitForFunction(() => !!window.ethereum, null, {
+    await page1.waitForFunction(() => !!window.ethereum, {
       timeout: 10_000,
     })
-    await page2.waitForFunction(() => !!window.ethereum, null, {
+    await page2.waitForFunction(() => !!window.ethereum, {
       timeout: 10_000,
     })
 

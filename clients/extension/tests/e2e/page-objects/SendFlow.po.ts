@@ -167,11 +167,8 @@ export class SendFlow extends BasePage {
 
     // Try data-testid coin selector trigger first
     if (await this.coinSelectorTrigger.isVisible({ timeout: 1000 }).catch(() => false)) {
-      // Debug: log element state if we have issues
-      await debugElementState(this.coinSelectorTrigger, 'coin-selector-trigger').catch(() => {})
-      
-      // Use robust click to handle overlays
-      await robustClick(this.coinSelectorTrigger, { timeout: 10000, maxRetries: 5 })
+      // Force click — the coin selector is often overlaid by stacked form fields
+      await this.coinSelectorTrigger.click({ force: true })
       await this.page.waitForTimeout(300)
       
       // Try to click the coin option by testid first

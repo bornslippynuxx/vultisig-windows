@@ -7,19 +7,16 @@
 
 import { test, expect } from '../fixtures/extension-loader'
 import { VaultPage } from '../page-objects/VaultPage.po'
-import { importVaultViaUI, getVaultConfigFromEnv } from '../helpers/vault-import'
-import * as fs from 'fs'
-
-// Test vault files
-const TEST_VAULTS_PATH = '/Users/crusty/vultisig-sdk-bot/credentials/test-vaults'
-const FAST_VAULT_FILE = `${TEST_VAULTS_PATH}/SdkFastVault1-extension-7085-share1of2.vult`
-const FAST_VAULT_PASSWORD = 'SHjsd76sa65aLKsdiU$'
-const SECURE_VAULT_FILE = `${TEST_VAULTS_PATH}/SdkSecure1-extension-2318-share1of2.vult`
-const SECURE_VAULT_PASSWORD = '12345678'
+import {
+  importVaultViaUI,
+  getVaultConfigFromEnv,
+  getSecureVaultConfigFromEnv,
+} from '../helpers/vault-import'
 
 test.describe('Vault Import', () => {
   test('import FastVault .vult file with password succeeds', async ({ context, extensionId }) => {
-    test.skip(!fs.existsSync(FAST_VAULT_FILE), 'FastVault file not found')
+    const config = getVaultConfigFromEnv()
+    test.skip(!config, 'No vault configuration (TEST_VAULT_PATH not set)')
 
     const page = await context.newPage()
     const vaultPage = new VaultPage(page, extensionId)
@@ -28,8 +25,8 @@ test.describe('Vault Import', () => {
       // Import via UI
       const result = await importVaultViaUI(page, {
         extensionId,
-        vaultPath: FAST_VAULT_FILE,
-        password: FAST_VAULT_PASSWORD,
+        vaultPath: config!.vaultPath,
+        password: config!.password,
       })
 
       expect(result).toBe(true)
@@ -51,17 +48,18 @@ test.describe('Vault Import', () => {
   })
 
   test('import SecureVault .vult file with password succeeds', async ({ context, extensionId }) => {
-    test.skip(!fs.existsSync(SECURE_VAULT_FILE), 'SecureVault file not found')
+    const secureConfigs = getSecureVaultConfigFromEnv()
+    test.skip(secureConfigs.length === 0, 'No secure vault configuration (SECURE_VAULT_SHARES not set)')
 
     const page = await context.newPage()
     const vaultPage = new VaultPage(page, extensionId)
 
     try {
-      // Import via UI
+      // Import first share via UI
       const result = await importVaultViaUI(page, {
         extensionId,
-        vaultPath: SECURE_VAULT_FILE,
-        password: SECURE_VAULT_PASSWORD,
+        vaultPath: secureConfigs[0].vaultPath,
+        password: secureConfigs[0].password,
       })
 
       expect(result).toBe(true)
@@ -79,7 +77,8 @@ test.describe('Vault Import', () => {
   })
 
   test('import with wrong password shows error or stays on password page', async ({ context, extensionId }) => {
-    test.skip(!fs.existsSync(FAST_VAULT_FILE), 'FastVault file not found')
+    const config = getVaultConfigFromEnv()
+    test.skip(!config, 'No vault configuration (TEST_VAULT_PATH not set)')
 
     const page = await context.newPage()
 
@@ -90,7 +89,7 @@ test.describe('Vault Import', () => {
 
       // Check if we're on new vault page or existing vault
       const pageText = await page.locator('body').textContent() || ''
-      
+
       // If extension already has a vault from prior test, skip
       if (!pageText.toLowerCase().includes('import') && !pageText.toLowerCase().includes('create')) {
         console.log('Extension already has vault, skipping wrong password test')
@@ -105,7 +104,7 @@ test.describe('Vault Import', () => {
         test.skip()
         return
       }
-      
+
       await importBtn.click()
       await page.waitForTimeout(500)
 
@@ -119,7 +118,7 @@ test.describe('Vault Import', () => {
       // Upload file
       const fileInput = page.locator('input[type="file"]')
       await fileInput.waitFor({ state: 'attached', timeout: 5000 })
-      await fileInput.setInputFiles(FAST_VAULT_FILE)
+      await fileInput.setInputFiles(config!.vaultPath)
       await page.waitForTimeout(500)
 
       // Click Continue
