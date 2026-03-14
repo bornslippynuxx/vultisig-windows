@@ -1,16 +1,14 @@
 import { getVaultId } from '@core/mpc/vault/Vault'
 import { useCoreNavigate } from '@core/ui/navigation/hooks/useCoreNavigate'
 import { useCurrentVault } from '@core/ui/vault/state/currentVault'
-import { UnstyledButton } from '@lib/ui/buttons/UnstyledButton'
 import { ErrorBoundary } from '@lib/ui/errors/ErrorBoundary'
-import { WalletIcon } from '@lib/ui/icons/WalletIcon'
-import { HStack, VStack } from '@lib/ui/layout/Stack'
+import { VStack } from '@lib/ui/layout/Stack'
 import { useViewState } from '@lib/ui/navigation/hooks/useViewState'
 import { PageContent } from '@lib/ui/page/PageContent'
 import { PageHeader } from '@lib/ui/page/PageHeader'
 import { Text } from '@lib/ui/text'
 import { getColor } from '@lib/ui/theme/getters'
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, Fragment, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
@@ -19,7 +17,9 @@ import { useAgentService } from '../hooks/useAgentService'
 import { useConnectionStatus } from '../hooks/useConnectionStatus'
 import { BurgerClosedIcon } from '../icons/BurgerClosedIcon'
 import { ChatMessage as ChatMessageType, TitleUpdatedEvent } from '../types'
-import { AgentChatInput } from './AgentChatInput'
+import { getDateSections } from '../utils/getDateSections'
+import { AgentAuthorizationView } from './AgentAuthorizationView'
+import { AgentChatFooter } from './AgentChatFooter'
 import { AgentChatMenu } from './AgentChatMenu'
 import { AgentEmptyState } from './AgentEmptyState'
 import { AgentErrorFallback } from './AgentErrorFallback'
@@ -28,11 +28,12 @@ import { AgentReplyMessage } from './AgentReplyMessage'
 import { ChatMessage } from './ChatMessage'
 import { ConfirmationPrompt } from './ConfirmationPrompt'
 import { PasswordPrompt } from './PasswordPrompt'
+import { ReauthorizeAgentDialog } from './ReauthorizeAgentDialog'
 
 type AgentChatViewState = { conversationId?: string; initialMessage?: string }
 
 export const AgentChatPage: FC = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useCoreNavigate()
   const vault = useCurrentVault()
   const [viewState, setViewState] = useViewState<
@@ -246,16 +247,6 @@ export const AgentChatPage: FC = () => {
     )
   }, [conversationId, orchestrator])
 
-  const handlePasswordSubmit = async (password: string) => {
-    dismissPasswordRequired()
-    await providePassword(password)
-  }
-
-  const handlePasswordCancel = () => {
-    dismissPasswordRequired()
-    cancelRequest()
-  }
-
   const handleConfirmationConfirm = async () => {
     dismissConfirmation()
     await provideConfirmation(true)
@@ -270,6 +261,78 @@ export const AgentChatPage: FC = () => {
   const [inputValue, setInputValue] = useState('')
   const [authSignInError, setAuthSignInError] = useState<string | null>(null)
   const [authSigningIn, setAuthSigningIn] = useState(false)
+
+  const [passwordMode, setPasswordMode] = useState(false)
+  const [passwordError, setPasswordError] = useState<string | null>(null)
+  const [passwordValue, setPasswordValue] = useState('')
+  const passwordSubmittedRef = useRef(false)
+  const messagesAtSubmitRef = useRef(0)
+
+  useEffect(() => {
+    if (passwordRequired) {
+      setPasswordMode(true)
+      setPasswordError(null)
+      setPasswordValue('')
+      passwordSubmittedRef.current = false
+      dismissPasswordRequired()
+    }
+  }, [passwordRequired, dismissPasswordRequired])
+
+  useEffect(() => {
+    if (error && passwordMode) {
+      setPasswordError(error)
+      dismissError()
+    }
+  }, [error, passwordMode, dismissError])
+
+  useEffect(() => {
+    if (
+      passwordMode &&
+      passwordSubmittedRef.current &&
+      messages.length > messagesAtSubmitRef.current
+    ) {
+      setPasswordMode(false)
+      setPasswordValue('')
+      setPasswordError(null)
+      passwordSubmittedRef.current = false
+    }
+  }, [passwordMode, messages.length])
+
+  const handleFooterPasswordSubmit = () => {
+    if (!passwordValue) return
+    setPasswordError(null)
+    passwordSubmittedRef.current = true
+    messagesAtSubmitRef.current = messages.length
+    providePassword(passwordValue)
+  }
+
+  const handleFooterPasswordCancel = () => {
+    setPasswordMode(false)
+    setPasswordError(null)
+    setPasswordValue('')
+    passwordSubmittedRef.current = false
+    cancelRequest()
+  }
+
+  const handleReauthorize = async () => {
+    if (!vaultId || !orchestrator) return
+    await orchestrator.reauthorize(vaultId)
+    dismissAuthRequired()
+    const pending = pendingMessageRef.current
+    pendingMessageRef.current = null
+    if (pending) {
+      try {
+        if (conversationId) {
+          await sendMessageToConversation(conversationId, vaultId, pending)
+        } else {
+          const id = await sendMessage(vaultId, pending)
+          setConversationId(id)
+        }
+      } catch {
+        // error events are surfaced via useAgentEvents
+      }
+    }
+  }
 
   const handleAuthSignIn = async (password: string) => {
     if (!vaultId) return
@@ -321,6 +384,44 @@ export const AgentChatPage: FC = () => {
     }
   }, [authRequired, messages])
 
+  const indexedMessages = messages.map((message, index) => ({ message, index }))
+
+  const { sections: messageSections, showLabels: showDateSections } =
+    getDateSections({
+      items: indexedMessages,
+      getTimestamp: ({ message }) => message.timestamp,
+      labels: {
+        today: t('today'),
+        yesterday: t('yesterday'),
+        locale: i18n.language,
+      },
+    })
+
+  const hasCachedPassword =
+    vaultId != null && orchestrator?.hasCachedPassword(vaultId)
+
+  if (showConnectionGate) {
+    return (
+      <VStack fullHeight>
+        <PageHeader
+          hasBorder
+          secondaryControls={
+            <AgentChatMenu
+              conversationId={null}
+              onSessionDeleted={handleSessionDeleted}
+            />
+          }
+        />
+        <AgentAuthorizationView
+          onSubmit={handleConnectionGateSubmit}
+          onCancel={handleConnectionGateCancel}
+          error={connectionError}
+          isLoading={connectionState === 'connecting'}
+        />
+      </VStack>
+    )
+  }
+
   return (
     <VStack fullHeight>
       <PageHeader
@@ -352,22 +453,33 @@ export const AgentChatPage: FC = () => {
                   : last,
               -1
             )
-            return messages.map((msg, i) => (
-              <ChatMessage
-                key={msg.id}
-                message={msg}
-                isAnalyzing={
-                  i === lastAssistantIdx &&
-                  !msg.analysisDuration &&
-                  isRequestActive
-                }
-              />
+            return messageSections.map(section => (
+              <Fragment key={section.key}>
+                {showDateSections && (
+                  <DateSectionLabel>
+                    <Text variant="caption" color="contrast">
+                      {section.label}
+                    </Text>
+                  </DateSectionLabel>
+                )}
+                {section.items.map(({ message, index }) => (
+                  <ChatMessage
+                    key={message.id}
+                    message={message}
+                    isAnalyzing={
+                      index === lastAssistantIdx &&
+                      !message.analysisDuration &&
+                      isRequestActive
+                    }
+                  />
+                ))}
+              </Fragment>
             ))
           })()}
           {isLoading && !messages.some(m => m.steps !== undefined) && (
             <AgentReplyMessage isAnalyzing content="" />
           )}
-          {error && (
+          {error && !passwordMode && (
             <ErrorMessage onClick={dismissError}>
               <Text size={14} color="danger">
                 {error}
@@ -377,40 +489,31 @@ export const AgentChatPage: FC = () => {
         </ErrorBoundary>
         <div ref={messagesEndRef} />
       </MessagesContainer>
-      <ChatInputContainer>
-        <AgentNavBar>
-          <WalletButton
-            onClick={() => navigate({ id: 'vault' })}
-            aria-label={t('wallet')}
-          >
-            <WalletIconWrapper>
-              <WalletIcon />
-            </WalletIconWrapper>
-          </WalletButton>
-          <InputWrapper>
-            <AgentChatInput
-              value={inputValue}
-              onChange={setInputValue}
-              onSubmit={() => {
-                const trimmed = inputValue.trim()
-                if (trimmed) {
-                  handleSend(trimmed)
-                  setInputValue('')
-                }
-              }}
-              placeholder={t('ask_about_plugins_policies')}
-              isLoading={isProcessing}
-              onStop={handleStop}
-            />
-          </InputWrapper>
-        </AgentNavBar>
-      </ChatInputContainer>
-      {passwordRequired && (
-        <PasswordPrompt
-          toolName={passwordRequired.toolName}
-          operation={passwordRequired.operation}
-          onSubmit={handlePasswordSubmit}
-          onCancel={handlePasswordCancel}
+      {passwordMode ? (
+        <AgentChatFooter
+          mode="password"
+          value={passwordValue}
+          onChange={setPasswordValue}
+          onSubmit={handleFooterPasswordSubmit}
+          onCancel={handleFooterPasswordCancel}
+          error={passwordError}
+        />
+      ) : (
+        <AgentChatFooter
+          mode="chat"
+          value={inputValue}
+          onChange={setInputValue}
+          onSubmit={() => {
+            const trimmed = inputValue.trim()
+            if (trimmed) {
+              handleSend(trimmed)
+              setInputValue('')
+            }
+          }}
+          placeholder={t('ask_about_plugins_policies')}
+          isLoading={isProcessing}
+          onStop={handleStop}
+          onWalletClick={() => navigate({ id: 'vault' })}
         />
       )}
       {confirmationRequired && (
@@ -421,7 +524,13 @@ export const AgentChatPage: FC = () => {
           onCancel={handleConfirmationCancel}
         />
       )}
-      {authRequired && (
+      {authRequired && hasCachedPassword && (
+        <ReauthorizeAgentDialog
+          onAuthorize={handleReauthorize}
+          onCancel={handleAuthCancel}
+        />
+      )}
+      {authRequired && !hasCachedPassword && (
         <PasswordPrompt
           toolName="sign_in"
           operation={t('agent_operation_sign_in')}
@@ -430,17 +539,6 @@ export const AgentChatPage: FC = () => {
           isLoading={authSigningIn}
           onSubmit={handleAuthSignIn}
           onCancel={handleAuthCancel}
-        />
-      )}
-      {!authRequired && showConnectionGate && (
-        <PasswordPrompt
-          toolName="sign_in"
-          operation={t('agent_operation_sign_in')}
-          description={t('agent_connect_description')}
-          error={connectionError}
-          isLoading={connectionState === 'connecting'}
-          onSubmit={handleConnectionGateSubmit}
-          onCancel={handleConnectionGateCancel}
         />
       )}
     </VStack>
@@ -453,51 +551,15 @@ const MessagesContainer = styled(PageContent)`
   padding: 16px;
 `
 
-const ChatInputContainer = styled.div`
-  padding: 12px 16px;
-`
-
-const AgentNavBar = styled(HStack)`
-  gap: 8px;
-  align-items: center;
-  width: 100%;
-`
-
-const InputWrapper = styled.div`
-  flex: 1;
-  min-width: 0;
-`
-
-const WalletIconWrapper = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-`
-
-const WalletButton = styled(UnstyledButton)`
-  flex-shrink: 0;
-  width: 52px;
-  height: 52px;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: ${getColor('foreground')};
-  border: 1px solid ${getColor('foregroundExtra')};
-  border-radius: 40px;
-  color: ${getColor('textShy')};
-  cursor: pointer;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background: ${getColor('foregroundExtra')};
-  }
-`
-
 const ErrorMessage = styled.div`
   padding: 12px 16px;
   background: ${getColor('danger')}20;
   border-radius: 8px;
   cursor: pointer;
+`
+
+const DateSectionLabel = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
 `

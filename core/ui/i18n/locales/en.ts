@@ -275,6 +275,7 @@ export const en = {
   edit_address: 'Edit Address',
   edit_friends_referral: 'Edit Friend Referral',
   edit_referral: 'Edit Referral',
+  remove_friends_referral: 'Remove Referral',
   edit_vaults: 'Edit Vaults',
   email: 'Email',
   email_backup: 'Enter your email to receive your backup',
@@ -1259,6 +1260,12 @@ export const en = {
   start_new_chat: 'Start New Chat',
   new_chat: 'New Chat',
   messages: 'messages',
+  failed_to_load_session_history: 'Failed to load session history',
+  agent_history_load_error_description:
+    'Please try again. If the problem persists, reopen the chat from a moment ago or start a new one.',
+  agent_history_empty_title: 'No chats yet',
+  agent_history_empty_description:
+    'Start a new chat and your recent conversations will appear here.',
   vultibot_description:
     'Your AI-powered vault assistant. I can swap, send, automate policies, check balances, and manage your vault.',
   agent_what_to_do: 'What would you like to do?',
@@ -1275,6 +1282,8 @@ export const en = {
   thinking: 'Thinking',
   try_saying: 'Try saying',
   ask_about_plugins_policies: 'Ask about plugins and policies...',
+  approve_transaction: 'Approve Transaction',
+  enter_vault_password: 'Enter vault password',
   signed_in: 'Signed in',
   password_required_for_operation:
     'Please enter your password for {{operation}}.',
@@ -1310,4 +1319,12 @@ export const en = {
   agent_analyzing: 'Analyzing...',
   agent_analyzed_for: 'Analyzed for {{duration}}s',
   agent_analyzed: 'Analyzed',
+  welcome_to_vulti_agent: 'Welcome to Vulti Agent',
+  agent_welcome_description:
+    'Your vault can now understand requests, automate actions, and help manage your crypto.',
+  authorize_agent: 'Authorize Agent',
+  reauthorize_vulti_agent: 'Re-authorize Vulti Agent',
+  agent_reauth_description:
+    'For security, authorization expires periodically.\nPlease confirm to continue using Vulti Agent.',
+  authorize: 'Authorize',
 }
