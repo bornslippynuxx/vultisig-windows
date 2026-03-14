@@ -109,6 +109,9 @@ storybook-static
 google-credentials.json
 .mind/
 
+# E2E test runtime state
+clients/extension/tests/.chain-rotation-state.json
+
 # Claude Code local settings (user-specific)
 .claude/settings.local.json
 
